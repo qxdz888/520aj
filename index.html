@@ -1,0 +1,1625 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport 适配手机屏幕，确保在手机上正常显示 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>520AJ 球鞋展示</title>
+
+  <style>
+    /* ============================
+       1. 基础样式重置
+       ============================ */
+    * {
+      margin: 0;           /* 清除浏览器默认的外边距 */
+      padding: 0;           /* 清除浏览器默认的内边距 */
+      box-sizing: border-box; /* 让 width/height 包含 padding 和 border */
+    }
+
+    /* ============================
+       2. 页面整体样式
+       ============================ */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;  /* 浅灰背景 */
+      color: #111;         /* 深色文字 */
+      min-height: 100vh;   /* 至少占满整个屏幕高度 */
+    }
+
+    /* ============================
+       3. 顶部导航栏
+       ============================ */
+    .navbar {
+      position: fixed;     /* 固定在页面顶部，滚动时不动 */
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;        /* 确保在最上层 */
+      background: rgba(255, 255, 255, 0.95); /* 半透明白色背景 */
+      backdrop-filter: blur(10px);         /* 背景模糊效果 */
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* 底部细线 */
+      padding: 0 20px;
+    }
+
+    /* 导航栏内部容器，限制最大宽度并居中 */
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 20px;
+      gap: 10px;
+    }
+
+    /* 第一行：Logo + 搜索框 */
+    .nav-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    /* 第二行：导航按钮 + 招商与售后 */
+    .nav-bottom-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .nav-bottom-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Logo 文字样式 */
+    .logo {
+      font-size: 24px;           /* 字号 */
+      font-weight: 800;          /* 字重（粗体） */
+      letter-spacing: 3px;        /* 字间距 */
+      /* 渐变色文字效果 */
+      background: linear-gradient(135deg, #e74c3c 0%, #ff6b6b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 导航按钮容器 */
+    .nav-links {
+      display: flex;             /* 横向排列按钮 */
+      gap: 8px;                  /* 按钮之间的间距 */
+      flex-wrap: wrap;           /* 空间不够时换行 */
+      justify-content: center;  /* 居中对齐 */
+    }
+
+    /* 单个导航按钮样式 */
+    .nav-btn {
+      padding: 8px 16px;        /* 上下8px，左右16px的内边距 */
+      border: 1px solid rgba(255, 255, 255, 0.2); /* 边框颜色 */
+      background: transparent;  /* 透明背景 */
+      color: #888;              /* 灰色文字 */
+      font-size: 13px;           /* 字号 */
+      cursor: pointer;           /* 鼠标变成手型 */
+      border-radius: 20px;      /* 圆角按钮 */
+      transition: all 0.3s ease; /* 过渡动画 */
+      white-space: nowrap;       /* 文字不换行 */
+    }
+
+    /* 导航按钮：鼠标悬停效果 */
+    .nav-btn:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      color: #fff;
+    }
+
+    /* 导航按钮：选中状态（当前分类） */
+    .nav-btn.active {
+      background: #fff;          /* 白色背景 */
+      color: #0a0a0a;           /* 深色文字 */
+      border-color: #fff;
+    }
+
+    /* ============================
+       3.2 搜索框样式
+       ============================ */
+    /* 搜索框容器 - 电脑端在导航右边 */
+    .search-container {
+      position: relative;
+    }
+
+    /* 搜索输入框 */
+    .search-input {
+      padding: 8px 35px 8px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 13px;
+      border-radius: 20px;
+      outline: none;
+      width: 160px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input::placeholder {
+      color: #666;
+    }
+
+    .search-input:focus {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.1);
+      width: 200px;
+    }
+
+    /* 搜索图标 */
+    .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    /* 搜索结果计数 */
+    .search-results-count {
+      text-align: center;
+      padding: 15px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    /* ============================
+       3.3 手机端导航栏样式（两行布局）
+       ============================ */
+    @media (max-width: 768px) {
+      /* 导航栏容器 - 两行布局 */
+      .nav-content {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+
+      /* 第一行：Logo + 搜索框 */
+      .nav-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      /* Logo 缩小 */
+      .logo {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      /* 搜索框缩小 */
+      .search-input {
+        width: 100px;
+        font-size: 12px;
+        padding: 6px 25px 6px 10px;
+      }
+
+      .search-input:focus {
+        width: 120px;
+      }
+
+      .search-icon {
+        font-size: 12px;
+        right: 8px;
+      }
+
+      /* 第二行：导航按钮 + 招商与售后（横向滚动） */
+      .nav-bottom-row {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .nav-bottom-row::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-links {
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      /* 招商与售后按钮 */
+      .nav-contact {
+        display: inline-block !important;
+        padding: 6px 12px;
+        font-size: 12px;
+        flex-shrink: 0;
+        white-space: nowrap;
+        margin-left: 0;
+        border-radius: 20px;
+      }
+    }
+
+    /* ============================
+       3.1 下拉菜单样式
+       ============================ */
+    /* 下拉菜单容器 */
+    .nav-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* 下拉菜单触发按钮 */
+    .nav-dropbtn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 下拉箭头 */
+    .nav-arrow {
+      font-size: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    /* 下拉菜单展开时箭头旋转 */
+    .nav-dropdown.active .nav-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* 下拉菜单内容（默认隐藏） */
+    .nav-dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(26, 26, 26, 0.98);
+      min-width: 120px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 8px;
+      margin-top: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 101;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* 展开时显示下拉菜单 */
+    .nav-dropdown.active .nav-dropdown-content {
+      display: flex;
+    }
+
+    /* 下拉菜单内的按钮样式 */
+    .nav-dropdown-content .nav-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 8px;
+      font-size: 12px;
+      padding: 8px 12px;
+      background: transparent;
+    }
+
+    .nav-dropdown-content .nav-btn:hover,
+    .nav-dropdown-content .nav-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ============================
+       B. 顶部导航栏 - 联系购买按钮
+       ============================ */
+    .nav-contact {
+      padding: 10px 24px;       /* 比普通按钮稍大更醒目 */
+      background: linear-gradient(135deg, #07c160 0%, #06ad56 100%); /* 微信绿 */
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(7, 193, 96, 0.3);
+      white-space: nowrap;
+      margin-left: 16px;         /* 和分类按钮拉开一点距离 */
+    }
+
+    .nav-contact:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(7, 193, 96, 0.4);
+    }
+
+    /* 顶部联系卡片的弹窗 */
+    /* ============================
+       A. 底部固定联系栏
+       ============================ */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(10, 10, 10, 0.98);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      z-index: 100;
+      transform: translateY(100%); /* 默认隐藏，往上偏移 */
+      transition: transform 0.4s ease;
+    }
+
+    /* 页面滚动超过300px后显示底部栏 */
+    .bottom-bar.show {
+      transform: translateY(0);
+    }
+
+    .bottom-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #888;
+      font-size: 14px;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+
+    .bottom-bar-item:hover {
+      color: #fff;
+    }
+
+    .bottom-bar-item img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    .bottom-bar-recruitment {
+      background: #fff;
+      color: #07c160;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .bottom-bar-recruitment:hover {
+      background: #f0f0f0;
+      color: #06ad56;
+    }
+
+    /* 页面底部留出空间（防止内容被底部栏遮挡） */
+      color: #fff;
+      font-weight: 600;
+    }
+    .page-content {
+      padding-bottom: 80px;
+    }
+
+    /* ============================
+       4. Banner 横幅区域
+       ============================ */
+    .banner {
+      margin-top: 70px;         /* 顶部导航占用的空间 */
+      height: 500px;            /* 高度 */
+      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* 渐变背景 */
+      display: flex;
+      align-items: center;       /* 垂直居中 */
+      justify-content: center;   /* 水平居中 */
+      position: relative;        /* 用于叠加背景图 */
+      overflow: hidden;           /* 超出部分隐藏 */
+    }
+
+    /* Banner 背景图：叠加在渐变上方 */
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      /* 这是一个示例图片地址，你可以替换成自己的图片链接 */
+      background: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1920') center/cover;
+      opacity: 0.3;              /* 30% 透明度 */
+    }
+
+    /* Banner 文字内容 */
+    .banner-content {
+      position: relative;        /* 位于背景图之上 */
+      z-index: 1;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .banner-title {
+      font-size: 48px;           /* 大标题字号 */
+      font-weight: 800;
+      letter-spacing: 4px;
+      margin-bottom: 16px;       /* 下方间距 */
+      text-transform: uppercase; /* 全大写 */
+    }
+
+    .banner-subtitle {
+      font-size: 18px;           /* 副标题字号 */
+      color: #888;               /* 灰色文字 */
+      letter-spacing: 2px;
+    }
+
+    /* ============================
+       5. 分类标题区域
+       ============================ */
+    .section-header {
+      max-width: 1400px;
+      margin: 60px auto 30px;    /* 上60px，下30px，左右自动 */
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      color: #666;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ============================
+       6. 图片网格展示区
+       ============================ */
+    .gallery {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px 60px;      /* 左右20px，下方60px */
+      /* CSS Grid 布局：自动填充，每列最小280px */
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;                 /* 卡片之间的间距 */
+    }
+
+    /* 单个卡片样式 */
+    .card {
+      background: #1a1a1a;       /* 卡片背景色 */
+      border-radius: 16px;       /* 圆角 */
+      overflow: hidden;          /* 图片超出部分隐藏 */
+      cursor: pointer;           /* 手型光标 */
+      transition: all 0.3s ease; /* 过渡动画 */
+      border: 1px solid rgba(255, 255, 255, 0.05); /* 细边框 */
+    }
+
+    /* 卡片：鼠标悬停效果（向上浮起） */
+    .card:hover {
+      transform: translateY(-8px);              /* 向上移动8px */
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); /* 阴影效果 */
+    }
+
+    /* 卡片内的图片：正方形比例 */
+    .card-image {
+      width: 100%;
+      aspect-ratio: 1;           /* 宽高比1:1（正方形） */
+      object-fit: cover;         /* 图片填充并裁剪 */
+      display: block;
+    }
+
+    /* 卡片内的文字区域 */
+    .card-info {
+      padding: 20px;
+    }
+
+    /* 鞋子名称 */
+    .card-name {
+      font-size: 15px;
+      font-weight: 600;           /* 粗体 */
+      margin-bottom: 8px;
+      color: #fff;
+      line-height: 1.4;          /* 行高 */
+    }
+
+    /* 鞋子价格 */
+    .card-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 原价（删除线） */
+    .original-price {
+      font-size: 13px;
+      color: #999;
+      text-decoration: line-through;
+      font-weight: 400;
+    }
+
+    /* 特惠价 */
+    .special-price {
+      color: #ff4444;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* 分类标签（小标签显示在卡片上） */
+    .card-category {
+      display: inline-block;     /* 行内块元素 */
+      margin-top: 10px;
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+      border-radius: 12px;
+      font-size: 11px;
+      color: #888;
+    }
+
+    /* ============================
+       C. 卡片下方的咨询购买按钮
+       ============================ */
+    .card-buy-btn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid rgba(7, 193, 96, 0.5);
+      border-radius: 10px;
+      color: #07c160;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .card-buy-btn:hover {
+      background: #07c160;
+      color: #fff;
+      border-color: #07c160;
+    }
+
+    .card-buy-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* ============================
+       7. 点击放大弹窗
+       ============================ */
+    .modal {
+      display: none;             /* 默认隐藏 */
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95); /* 半透明黑色背景 */
+      z-index: 1000;             /* 位于所有内容之上 */
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    /* 弹窗：显示状态（通过 JS 添加 .active 类来显示） */
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      max-width: 90%;            /* 最大宽度90% */
+      max-height: 90%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 弹窗内的大图 */
+    .modal-image {
+      max-width: 100%;
+      max-height: 55vh;          /* 最大高度55%的视口高度，给联系区留空间 */
+      border-radius: 12px;
+      display: block;
+    }
+
+    .modal-info {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .modal-name {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .modal-price {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* 弹窗内的咨询购买区域 */
+    .modal-contact {
+      margin-top: 24px;
+      background: #1a1a1a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      width: 200px;
+      max-height: 30vh;
+      overflow-y: auto;
+    }
+
+    .modal-contact-title {
+      font-size: 11px;
+      color: #888;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* 二维码图片样式 */
+    .modal-qr {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      background: #fff;
+      padding: 6px;
+      object-fit: contain;
+    }
+
+    .modal-wechat-label {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .modal-wechat-id {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+
+    /* 复制按钮 */
+    .modal-copy-btn {
+      width: 100%;
+      padding: 10px;
+      background: #07c160;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .modal-copy-btn:hover {
+      background: #06ad56;
+    }
+
+    .modal-copy-btn.copied {
+      background: #333;
+    }
+
+    .modal-copy-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* 弹窗关闭按钮 */
+    .modal-close {
+      position: absolute;
+      top: -50px;               /* 位于图片上方 */
+      right: 0;
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 32px;
+      cursor: pointer;
+      padding: 10px;
+      transition: color 0.3s;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    /* ============================
+       8. 空状态（当某个分类没有内容时显示）
+       ============================ */
+    .empty-state {
+      grid-column: 1 / -1;       /* 横跨整行 */
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    /* 右下角悬浮按钮已移除 */
+
+    /* ============================
+       11. 响应式设计（适配手机/平板）
+       ============================ */
+
+    /* 平板尺寸（宽度 <= 768px） */
+    @media (max-width: 768px) {
+      .navbar {
+        position: fixed;
+        width: 100%;
+      }
+
+      /* 导航栏容器 - 两行布局 */
+      .nav-content {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+
+      /* 第一行：Logo + 搜索框 */
+      .nav-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      /* Logo 缩小 */
+      .logo {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      /* 搜索框缩小 */
+      .search-container {
+        flex-shrink: 0;
+      }
+
+      .search-input {
+        width: 100px;
+        font-size: 12px;
+        padding: 6px 25px 6px 10px;
+      }
+
+      .search-input:focus {
+        width: 120px;
+      }
+
+      .search-icon {
+        font-size: 12px;
+        right: 8px;
+      }
+
+      /* 第二行：导航按钮 + 招商与售后（横向滚动） */
+      .nav-bottom-row {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .nav-bottom-row::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-links {
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .banner {
+        margin-top: 120px;  /* 两行导航栏的高度 */
+        height: 350px;
+      }
+
+      /* 页面内容顶部间距 */
+      .page-content {
+        padding-top: 120px;
+      }
+
+      .banner-title {
+        font-size: 28px;
+      }
+
+      .banner-subtitle {
+        font-size: 14px;
+      }
+
+      /* 图片网格 */
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+      }
+
+      .card-info {
+        padding: 14px;
+      }
+
+      .card-name {
+        font-size: 13px;
+      }
+
+      .card-price {
+        font-size: 16px;
+      }
+
+      .section-header {
+        margin-top: 30px;
+      }
+
+      /* 招商与售后按钮 */
+      .nav-contact {
+        display: inline-block !important;
+        padding: 6px 12px;
+        font-size: 12px;
+        flex-shrink: 0;
+        white-space: nowrap;
+        margin-left: 0;
+        border-radius: 20px;
+      }
+
+      /* 手机端下拉菜单优化 */
+      .nav-dropdown-content {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        top: auto;
+        bottom: auto;
+        max-height: 60vh;
+        overflow-y: auto;
+      }
+
+      /* 底部栏手机适配 */
+      .bottom-bar {
+        height: auto;
+        padding: 12px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .bottom-bar-item span {
+        font-size: 13px;
+      }
+    }
+
+    /* 手机尺寸（宽度 <= 480px） */
+    @media (max-width: 480px) {
+      /* 图片网格：固定2列布局 */
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .banner-title {
+        font-size: 22px;
+      }
+
+      .nav-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================
+       10. HTML 结构部分
+       ============================ -->
+
+  <!-- 顶部导航栏 -->
+  <nav class="navbar">
+    <div class="nav-content">
+      <!-- 第一行：Logo + 搜索框 -->
+      <div class="nav-top-row">
+        <!-- Logo 文字 -->
+        <div class="logo">520AJ</div>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索...">
+          <span class="search-icon">🔍</span>
+        </div>
+      </div>
+
+      <!-- 第二行：导航按钮 + 招商与售后（横向滚动） -->
+      <div class="nav-bottom-row">
+        <div class="nav-links">
+          <!-- AUTO_NAV_START -->
+          <button class="nav-btn active" data-category="all">全部</button>
+          <div class="nav-dropdown">
+            <button class="nav-btn nav-dropbtn" data-category="adidas" data-children="德训,潮流,贝壳头,阿迪">
+              Adidas <span class="nav-arrow">▼</span>
+            </button>
+            <div class="nav-dropdown-content">
+          <button class="nav-btn" data-category="德训">德训</button>
+          <button class="nav-btn" data-category="潮流">潮流</button>
+          <button class="nav-btn" data-category="贝壳头">贝壳头</button>
+          <button class="nav-btn" data-category="阿迪">阿迪</button>
+          </div>
+          </div>
+          <div class="nav-dropdown">
+            <button class="nav-btn nav-dropbtn" data-category="nike" data-children="dunk,乔一,乔四,开拓者,空军,运动款,高帮">
+              Nike <span class="nav-arrow">▼</span>
+            </button>
+            <div class="nav-dropdown-content">
+          <button class="nav-btn" data-category="dunk">dunk</button>
+          <button class="nav-btn" data-category="乔一">乔一</button>
+          <button class="nav-btn" data-category="乔四">乔四</button>
+          <button class="nav-btn" data-category="开拓者">开拓者</button>
+          <button class="nav-btn" data-category="空军">空军</button>
+          <button class="nav-btn" data-category="运动款">运动款</button>
+          <button class="nav-btn" data-category="高帮">高帮</button>
+          </div>
+          </div>
+          <button class="nav-btn" data-category="LV">LV</button>
+          <button class="nav-btn" data-category="Puma">Puma</button>
+          <button class="nav-btn" data-category="Wans">Wans</button>
+        <!-- AUTO_NAV_END -->
+          </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Banner 横幅区 -->
+  <section class="banner">
+    <div class="banner-content">
+      <!-- 可修改 Banner 标题 -->
+      <h1 class="banner-title">潮流鞋款展示</h1>
+      <!-- 可修改 Banner 副标题 -->
+      <p class="banner-subtitle">精选 Nike & 乔一 系列</p>
+    </div>
+  </section>
+
+  <!-- 分类标题（会随筛选动态变化） -->
+  <div class="section-header">
+    <p class="section-title">全部鞋款</p>
+  </div>
+
+  <!-- 搜索结果提示 -->
+  <div class="search-results-count" id="searchResultsCount" style="display: none;"></div>
+
+  <!-- 图片展示区：JS 会动态往这里插入卡片 -->
+  <section class="gallery" id="gallery"></section>
+
+  <!-- 点击图片后的放大弹窗 -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <!-- 关闭按钮（× 号） -->
+      <button class="modal-close" id="modalClose">&times;</button>
+      <!-- 大图展示 -->
+      <img class="modal-image" id="modalImage" src="" alt="">
+      <!-- 图片下方的文字信息 -->
+      <div class="modal-info">
+        <h2 class="modal-name" id="modalName"></h2>
+        <p class="modal-price" id="modalPrice"></p>
+      </div>
+      <!-- 咨询购买区域：二维码 + 微信ID + 复制按钮 -->
+      <div class="modal-contact">
+        <p class="modal-contact-title">扫码联系客服</p>
+        <!--
+          二维码图片：
+          把 src 改成你自己的微信二维码图片地址
+          支持本地路径（如 wechat-qr.png）或网络图片地址
+        -->
+        <img class="modal-qr" id="modalQr" src="wechat-qr.png" alt="微信二维码">
+        <!-- 微信ID（和右侧弹窗共用同一个ID，复制功能通用） -->
+        <p class="modal-wechat-label">微信号</p>
+        <p class="modal-wechat-id" id="wechatId">xdq880406</p>
+        <!-- 复制按钮 -->
+        <button class="modal-copy-btn" onclick="copyWechat()">
+          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          复制微信号
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       A. 底部固定联系栏
+       ============================ -->
+  <div class="bottom-bar" id="bottomBar">
+    <!-- 招商与售后 -->
+    <div class="bottom-bar-item bottom-bar-recruitment" onclick="window.location.href='recruitment.html'">
+      <span>招商与售后</span>
+    </div>
+
+  </div>
+
+  <script>
+    /* ============================
+       11. JavaScript 逻辑部分
+       ============================ */
+
+    /* ============================
+       11.1 鞋子数据配置
+       ============================
+       
+       这是最重要的数据部分，修改图片和内容都在这里改！
+       
+       每双鞋的数据结构：
+       {
+         id: 数字,                    // 唯一编号，不能重复
+         name: "鞋子名称",             // 显示在卡片上的名字
+         category: "分类名",          // 必须和上方导航按钮的 data-category 一致
+         price: "¥价格",              // 显示的价格
+         image: "图片链接"            // 鞋子图片的 URL 地址
+       }
+       
+       如何添加新鞋子：
+       在大括号后加逗号，然后加一个新的大括号即可
+       
+       如何修改图片：
+       把 image 的值换成你自己的图片链接（支持网络图片或本地相对路径）
+    */
+    const shoes = [
+  { id: 1, name: "8009黑白", category: "德训", imgIndex: 1, price: "169元", specialPrice: "129元", image: "images/adidas/德训/8009黑白-169.jpeg" },
+  { id: 2, name: "8009黄白", category: "德训", imgIndex: 2, price: "169元", specialPrice: "129元", image: "images/adidas/德训/8009黄白-169.jpeg" },
+  { id: 3, name: "8009蓝色", category: "德训", imgIndex: 3, price: "169元", specialPrice: "129元", image: "images/adidas/德训/8009蓝色-169.jpeg" },
+  { id: 4, name: "8009白黑", category: "德训", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/adidas/德训/8009白黑-169.jpeg" },
+  { id: 5, name: "6079黑色", category: "潮流", imgIndex: 1, price: "159元", specialPrice: "129元", image: "images/adidas/潮流/6079黑色-159.jpeg" },
+  { id: 6, name: "6079蓝色", category: "潮流", imgIndex: 2, price: "159元", specialPrice: "129元", image: "images/adidas/潮流/6079蓝色-159.jpeg" },
+  { id: 7, name: "8819黑色", category: "贝壳头", imgIndex: 1, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819黑色-169.jpeg" },
+  { id: 8, name: "8819黑白太阳花", category: "贝壳头", imgIndex: 2, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819黑白太阳花-169.jpeg" },
+  { id: 9, name: "8819黑白", category: "贝壳头", imgIndex: 3, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819黑白-169.jpeg" },
+  { id: 10, name: "8819黑生胶", category: "贝壳头", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819黑生胶-169.jpeg" },
+  { id: 11, name: "8819黑印花", category: "贝壳头", imgIndex: 5, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819黑印花-169.jpeg" },
+  { id: 12, name: "8819迪士尼", category: "贝壳头", imgIndex: 6, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819迪士尼-169.jpeg" },
+  { id: 13, name: "8819蓝生胶", category: "贝壳头", imgIndex: 7, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819蓝生胶-169.jpeg" },
+  { id: 14, name: "8819荼蘼盛开", category: "贝壳头", imgIndex: 8, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819荼蘼盛开-169.jpeg" },
+  { id: 15, name: "8819粉屿星", category: "贝壳头", imgIndex: 9, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819粉屿星-169.jpeg" },
+  { id: 16, name: "8819白黑金", category: "贝壳头", imgIndex: 10, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819白黑金-169.jpeg" },
+  { id: 17, name: "8819摩登黑", category: "贝壳头", imgIndex: 11, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819摩登黑-169.jpeg" },
+  { id: 18, name: "8819白金", category: "贝壳头", imgIndex: 12, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819白金-169.jpeg" },
+  { id: 19, name: "8819摩登白", category: "贝壳头", imgIndex: 13, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819摩登白-169.jpeg" },
+  { id: 20, name: "8819午夜蓝", category: "贝壳头", imgIndex: 14, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819午夜蓝-169.jpeg" },
+  { id: 21, name: "8819三叶草", category: "贝壳头", imgIndex: 15, price: "169元", specialPrice: "129元", image: "images/adidas/贝壳头/8819三叶草-169.jpeg" },
+  { id: 22, name: "LV白钻石", category: "LV", imgIndex: 1, price: "189元", specialPrice: "129元", image: "images/lv/LV白钻石-189.jpeg" },
+  { id: 23, name: "LV牛仔蓝米", category: "LV", imgIndex: 2, price: "189元", specialPrice: "129元", image: "images/lv/LV牛仔蓝米-189.jpeg" },
+  { id: 24, name: "LV牛仔橘", category: "LV", imgIndex: 3, price: "189元", specialPrice: "129元", image: "images/lv/LV牛仔橘-189.jpeg" },
+  { id: 25, name: "LV蓝白牛仔", category: "LV", imgIndex: 4, price: "189元", specialPrice: "129元", image: "images/lv/LV蓝白牛仔-189.jpeg" },
+  { id: 26, name: "LV黑亮片", category: "LV", imgIndex: 5, price: "189元", specialPrice: "129元", image: "images/lv/LV黑亮片-189.jpeg" },
+  { id: 27, name: "LV黑色", category: "LV", imgIndex: 6, price: "189元", specialPrice: "129元", image: "images/lv/LV黑色-189.jpeg" },
+  { id: 28, name: "黑色牛仔", category: "LV", imgIndex: 7, price: "189元", specialPrice: "129元", image: "images/lv/黑色牛仔-189.jpeg" },
+  { id: 29, name: "LV白灰", category: "LV", imgIndex: 8, price: "189元", specialPrice: "129元", image: "images/lv/LV白灰-189.jpeg" },
+  { id: 30, name: "LV白灰水泥", category: "LV", imgIndex: 9, price: "189元", specialPrice: "129元", image: "images/lv/LV白灰水泥-189.jpeg" },
+  { id: 31, name: "LV蓝色牛仔", category: "LV", imgIndex: 10, price: "189元", specialPrice: "129元", image: "images/lv/LV蓝色牛仔-189.jpeg" },
+  { id: 32, name: "LV黑牛仔", category: "LV", imgIndex: 11, price: "189元", specialPrice: "129元", image: "images/lv/LV黑牛仔-189.jpeg" },
+  { id: 33, name: "518黑生胶", category: "dunk", imgIndex: 1, price: "159元", specialPrice: "129元", image: "images/nike/dunk/518黑生胶-159.jpeg" },
+  { id: 34, name: "518高尔夫", category: "dunk", imgIndex: 2, price: "159元", specialPrice: "129元", image: "images/nike/dunk/518高尔夫-159.jpeg" },
+  { id: 35, name: "518白生胶", category: "dunk", imgIndex: 3, price: "159元", specialPrice: "129元", image: "images/nike/dunk/518白生胶-159.jpeg" },
+  { id: 36, name: "518泡泡堂", category: "dunk", imgIndex: 4, price: "159元", specialPrice: "129元", image: "images/nike/dunk/518泡泡堂-159.jpeg" },
+  { id: 37, name: "518兰生胶", category: "dunk", imgIndex: 5, price: "159元", specialPrice: "129元", image: "images/nike/dunk/518兰生胶-159.jpeg" },
+  { id: 38, name: "黑白紫", category: "乔一", imgIndex: 1, price: "159元", specialPrice: "129元", image: "images/nike/乔一/黑白紫-159.jpeg" },
+  { id: 39, name: "j809心心相印", category: "乔一", imgIndex: 2, price: "159元", specialPrice: "129元", image: "images/nike/乔一/j809心心相印-159.jpeg" },
+  { id: 40, name: "aj1阿波罗太阳神", category: "乔一", imgIndex: 3, price: "169元", specialPrice: "129元", image: "images/nike/乔一/aj1阿波罗太阳神-169.jpeg" },
+  { id: 41, name: "aj1江浸月", category: "乔一", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/nike/乔一/aj1江浸月-169.jpeg" },
+  { id: 42, name: "aj1星海遗珠", category: "乔一", imgIndex: 5, price: "169元", specialPrice: "129元", image: "images/nike/乔一/aj1星海遗珠-169.jpeg" },
+  { id: 43, name: "aj1幻影鎏金", category: "乔一", imgIndex: 6, price: "169元", specialPrice: "129元", image: "images/nike/乔一/aj1幻影鎏金-169.jpeg" },
+  { id: 44, name: "618龙纹黄金", category: "乔一", imgIndex: 7, price: "159元", specialPrice: "129元", image: "images/nike/乔一/618龙纹黄金-159.jpeg" },
+  { id: 45, name: "618小黑曜石", category: "乔一", imgIndex: 8, price: "159元", specialPrice: "129元", image: "images/nike/乔一/618小黑曜石-159.jpeg" },
+  { id: 46, name: "558半岛白茶", category: "乔一", imgIndex: 9, price: "159元", specialPrice: "129元", image: "images/nike/乔一/558半岛白茶-159.jpeg" },
+  { id: 47, name: "518黑灰红", category: "乔一", imgIndex: 10, price: "159元", specialPrice: "129元", image: "images/nike/乔一/518黑灰红-159.jpeg" },
+  { id: 48, name: "2601黑红lv", category: "乔一", imgIndex: 11, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2601黑红lv-159.jpeg" },
+  { id: 49, name: "2601黑白lv", category: "乔一", imgIndex: 12, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2601黑白lv-159.jpeg" },
+  { id: 50, name: "2601白黑黄", category: "乔一", imgIndex: 13, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2601白黑黄-159.jpeg" },
+  { id: 51, name: "2601白黑蓝", category: "乔一", imgIndex: 14, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2601白黑蓝-159.jpeg" },
+  { id: 52, name: "2601白黑联名", category: "乔一", imgIndex: 15, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2601白黑联名-159.jpeg" },
+  { id: 53, name: "2601白黑红", category: "乔一", imgIndex: 16, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2601白黑红-159.jpeg" },
+  { id: 54, name: "2601白兰lv", category: "乔一", imgIndex: 17, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2601白兰lv-159.jpeg" },
+  { id: 55, name: "2519奶油米黑", category: "乔一", imgIndex: 18, price: "159元", specialPrice: "129元", image: "images/nike/乔一/2519奶油米黑-159.jpeg" },
+  { id: 56, name: "23001黑蓝", category: "乔一", imgIndex: 19, price: "159元", specialPrice: "129元", image: "images/nike/乔一/23001黑蓝-159.jpeg" },
+  { id: 57, name: "23001黑白", category: "乔一", imgIndex: 20, price: "159元", specialPrice: "129元", image: "images/nike/乔一/23001黑白-159.jpeg" },
+  { id: 58, name: "23001酒红", category: "乔一", imgIndex: 21, price: "159元", specialPrice: "129元", image: "images/nike/乔一/23001酒红-159.jpeg" },
+  { id: 59, name: "23001白黑金", category: "乔一", imgIndex: 22, price: "159元", specialPrice: "129元", image: "images/nike/乔一/23001白黑金-159.jpeg" },
+  { id: 60, name: "23001白蓝", category: "乔一", imgIndex: 23, price: "159元", specialPrice: "129元", image: "images/nike/乔一/23001白蓝-159.jpeg" },
+  { id: 61, name: "228黑银", category: "乔一", imgIndex: 24, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑银-159.jpeg" },
+  { id: 62, name: "228黑蓝脚趾", category: "乔一", imgIndex: 25, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑蓝脚趾-159.jpeg" },
+  { id: 63, name: "228黑红", category: "乔一", imgIndex: 26, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑红-159.jpeg" },
+  { id: 64, name: "228黑紫脚趾", category: "乔一", imgIndex: 27, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑紫脚趾-159.jpeg" },
+  { id: 65, name: "228黑粉脚趾", category: "乔一", imgIndex: 28, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑粉脚趾-159.jpeg" },
+  { id: 66, name: "228黑米", category: "乔一", imgIndex: 29, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑米-159.jpeg" },
+  { id: 67, name: "228黑白熊猫", category: "乔一", imgIndex: 30, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑白熊猫-159.jpeg" },
+  { id: 68, name: "228黑爆裂", category: "乔一", imgIndex: 31, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑爆裂-159.jpeg" },
+  { id: 69, name: "228黑灰钻", category: "乔一", imgIndex: 32, price: "169元", specialPrice: "129元", image: "images/nike/乔一/228黑灰钻-169.jpeg" },
+  { id: 70, name: "228黑深红", category: "乔一", imgIndex: 33, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑深红-159.jpeg" },
+  { id: 71, name: "228黑武士", category: "乔一", imgIndex: 34, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑武士-159.jpeg" },
+  { id: 72, name: "228黑影子灰", category: "乔一", imgIndex: 35, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑影子灰-159.jpeg" },
+  { id: 73, name: "228黑亮片", category: "乔一", imgIndex: 36, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228黑亮片-159.jpeg" },
+  { id: 74, name: "228蓝白", category: "乔一", imgIndex: 37, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228蓝白-159.jpeg" },
+  { id: 75, name: "228白黑银", category: "乔一", imgIndex: 38, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白黑银-159.jpeg" },
+  { id: 76, name: "228白黑红", category: "乔一", imgIndex: 39, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白黑红-159.jpeg" },
+  { id: 77, name: "228白黑桔", category: "乔一", imgIndex: 40, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白黑桔-159.jpeg" },
+  { id: 78, name: "228白红", category: "乔一", imgIndex: 41, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白红-159.jpeg" },
+  { id: 79, name: "228白粉脚趾", category: "乔一", imgIndex: 42, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白粉脚趾-159.jpeg" },
+  { id: 80, name: "228白灰爆裂", category: "乔一", imgIndex: 43, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白灰爆裂-159.jpeg" },
+  { id: 81, name: "228白彩", category: "乔一", imgIndex: 44, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白彩-159.jpeg" },
+  { id: 82, name: "228白兰月", category: "乔一", imgIndex: 45, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228白兰月-159.jpeg" },
+  { id: 83, name: "228爱国者", category: "乔一", imgIndex: 46, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228爱国者-159.jpeg" },
+  { id: 84, name: "228涂鸦黑白", category: "乔一", imgIndex: 47, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228涂鸦黑白-159.jpeg" },
+  { id: 85, name: "228涂鸦牛仔", category: "乔一", imgIndex: 48, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228涂鸦牛仔-159.jpeg" },
+  { id: 86, name: "228涂鸦蓝白", category: "乔一", imgIndex: 49, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228涂鸦蓝白-159.jpeg" },
+  { id: 87, name: "228海蓝红", category: "乔一", imgIndex: 50, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228海蓝红-159.jpeg" },
+  { id: 88, name: "228海军风暴", category: "乔一", imgIndex: 51, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228海军风暴-159.jpeg" },
+  { id: 89, name: "228毒液", category: "乔一", imgIndex: 52, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228毒液-159.jpeg" },
+  { id: 90, name: "228太阳神", category: "乔一", imgIndex: 53, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228太阳神-159.jpeg" },
+  { id: 91, name: "228大黄蜂", category: "乔一", imgIndex: 54, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228大黄蜂-159.jpeg" },
+  { id: 92, name: "228十里紫", category: "乔一", imgIndex: 55, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228十里紫-159.jpeg" },
+  { id: 93, name: "228冰川蓝", category: "乔一", imgIndex: 56, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228冰川蓝-159.jpeg" },
+  { id: 94, name: "228北卡蓝", category: "乔一", imgIndex: 57, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228北卡蓝-159.jpeg" },
+  { id: 95, name: "228亮皮熊猫", category: "乔一", imgIndex: 58, price: "159元", specialPrice: "129元", image: "images/nike/乔一/228亮皮熊猫-159.jpeg" },
+  { id: 96, name: "1667黑白灰", category: "乔一", imgIndex: 59, price: "159元", specialPrice: "129元", image: "images/nike/乔一/1667黑白灰-159.jpeg" },
+  { id: 97, name: "1667灰红", category: "乔一", imgIndex: 60, price: "159元", specialPrice: "129元", image: "images/nike/乔一/1667灰红-159.jpeg" },
+  { id: 98, name: "005藤原豆腐", category: "乔一", imgIndex: 61, price: "159元", specialPrice: "129元", image: "images/nike/乔一/005藤原豆腐-159.jpeg" },
+  { id: 99, name: "005蓝瀑布", category: "乔一", imgIndex: 62, price: "159元", specialPrice: "129元", image: "images/nike/乔一/005蓝瀑布-159.jpeg" },
+  { id: 100, name: "白黑联名", category: "乔四", imgIndex: 1, price: "189元", specialPrice: "129元", image: "images/nike/乔四/白黑联名-189.jpeg" },
+  { id: 101, name: "电母", category: "乔四", imgIndex: 2, price: "189元", specialPrice: "129元", image: "images/nike/乔四/电母-189.jpeg" },
+  { id: 102, name: "8828白灰联盟", category: "乔四", imgIndex: 3, price: "189元", specialPrice: "129元", image: "images/nike/乔四/8828白灰联盟-189.jpeg" },
+  { id: 103, name: "8828白兰联盟", category: "乔四", imgIndex: 4, price: "189元", specialPrice: "129元", image: "images/nike/乔四/8828白兰联盟-189.jpeg" },
+  { id: 104, name: "8033蓝色", category: "乔四", imgIndex: 5, price: "189元", specialPrice: "129元", image: "images/nike/乔四/8033蓝色-189.jpeg" },
+  { id: 105, name: "335白黑红", category: "乔四", imgIndex: 6, price: "189元", specialPrice: "129元", image: "images/nike/乔四/335白黑红-189.jpeg" },
+  { id: 106, name: "335白黑紫", category: "乔四", imgIndex: 7, price: "189元", specialPrice: "129元", image: "images/nike/乔四/335白黑紫-189.jpeg" },
+  { id: 107, name: "329蓝爆裂", category: "乔四", imgIndex: 8, price: "189元", specialPrice: "129元", image: "images/nike/乔四/329蓝爆裂-189.jpeg" },
+  { id: 108, name: "329白藏青", category: "乔四", imgIndex: 9, price: "189元", specialPrice: "129元", image: "images/nike/乔四/329白藏青-189.jpeg" },
+  { id: 109, name: "312黑桔", category: "乔四", imgIndex: 10, price: "189元", specialPrice: "129元", image: "images/nike/乔四/312黑桔-189.jpeg" },
+  { id: 110, name: "312白灰联盟", category: "乔四", imgIndex: 11, price: "189元", specialPrice: "129元", image: "images/nike/乔四/312白灰联盟-189.jpeg" },
+  { id: 111, name: "312深蓝白", category: "乔四", imgIndex: 12, price: "189元", specialPrice: "129元", image: "images/nike/乔四/312深蓝白-189.jpeg" },
+  { id: 112, name: "1817黑金", category: "开拓者", imgIndex: 1, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817黑金-169.jpeg" },
+  { id: 113, name: "1817黑红", category: "开拓者", imgIndex: 2, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817黑红-169.jpeg" },
+  { id: 114, name: "1817黑白", category: "开拓者", imgIndex: 3, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817黑白-169.jpeg" },
+  { id: 115, name: "1817美式星期", category: "开拓者", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817美式星期-169.jpeg" },
+  { id: 116, name: "1817粉色", category: "开拓者", imgIndex: 5, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817粉色-169.jpeg" },
+  { id: 117, name: "1817白黑", category: "开拓者", imgIndex: 6, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817白黑-169.jpeg" },
+  { id: 118, name: "1817深蓝白", category: "开拓者", imgIndex: 7, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817深蓝白-169.jpeg" },
+  { id: 119, name: "1817毒巫娃娃", category: "开拓者", imgIndex: 8, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1817毒巫娃娃-169.jpeg" },
+  { id: 120, name: "1807黑金", category: "开拓者", imgIndex: 9, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1807黑金-169.jpeg" },
+  { id: 121, name: "1807黑白", category: "开拓者", imgIndex: 10, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1807黑白-169.jpeg" },
+  { id: 122, name: "1807深蓝白", category: "开拓者", imgIndex: 11, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1807深蓝白-169.jpeg" },
+  { id: 123, name: "1807白桔", category: "开拓者", imgIndex: 12, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1807白桔-169.jpeg" },
+  { id: 124, name: "1802白黑", category: "开拓者", imgIndex: 13, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1802白黑-169.jpeg" },
+  { id: 125, name: "1802白红", category: "开拓者", imgIndex: 14, price: "169元", specialPrice: "129元", image: "images/nike/开拓者/1802白红-169.jpeg" },
+  { id: 126, name: "1775872889658", category: "开拓者", imgIndex: 15, price: "面议", specialPrice: "", image: "images/nike/开拓者/1775872889658.jpeg" },
+  { id: 127, name: "1775872872142", category: "开拓者", imgIndex: 16, price: "面议", specialPrice: "", image: "images/nike/开拓者/1775872872142.jpeg" },
+  { id: 128, name: "1770949801023", category: "开拓者", imgIndex: 17, price: "面议", specialPrice: "", image: "images/nike/开拓者/1770949801023.jpeg" },
+  { id: 129, name: "233黑生胶", category: "空军", imgIndex: 1, price: "169元", specialPrice: "129元", image: "images/nike/空军/233黑生胶-169.jpeg" },
+  { id: 130, name: "2101黑牛仔", category: "空军", imgIndex: 2, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101黑牛仔-169.jpeg" },
+  { id: 131, name: "2101黑四勾", category: "空军", imgIndex: 3, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101黑四勾-169.jpeg" },
+  { id: 132, name: "2101马年限定", category: "空军", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101马年限定-169.jpeg" },
+  { id: 133, name: "2101飞马白", category: "空军", imgIndex: 5, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101飞马白-169.jpeg" },
+  { id: 134, name: "2101迷彩蓝", category: "空军", imgIndex: 6, price: "159元", specialPrice: "129元", image: "images/nike/空军/2101迷彩蓝-159.jpeg" },
+  { id: 135, name: "2101豹纹黑", category: "空军", imgIndex: 7, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101豹纹黑-169.jpeg" },
+  { id: 136, name: "2101豹纹蓝", category: "空军", imgIndex: 8, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101豹纹蓝-169.jpeg" },
+  { id: 137, name: "2101蓝色小勾", category: "空军", imgIndex: 9, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101蓝色小勾-169.jpeg" },
+  { id: 138, name: "2101蓝四勾", category: "空军", imgIndex: 10, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101蓝四勾-169.jpeg" },
+  { id: 139, name: "2101纯白", category: "空军", imgIndex: 11, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101纯白-169.jpeg" },
+  { id: 140, name: "2101福临门", category: "空军", imgIndex: 12, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101福临门-169.jpeg" },
+  { id: 141, name: "2101白黑", category: "空军", imgIndex: 13, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101白黑-169.jpeg" },
+  { id: 142, name: "2101白金勾", category: "空军", imgIndex: 14, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101白金勾-169.jpeg" },
+  { id: 143, name: "2101白红灰", category: "空军", imgIndex: 15, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101白红灰-169.jpeg" },
+  { id: 144, name: "2101灰兰小勾", category: "空军", imgIndex: 16, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101灰兰小勾-169.jpeg" },
+  { id: 145, name: "2101白牛仔", category: "空军", imgIndex: 17, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101白牛仔-169.jpeg" },
+  { id: 146, name: "2101小麦色", category: "空军", imgIndex: 18, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101小麦色-169.jpeg" },
+  { id: 147, name: "2101夜光浅灰", category: "空军", imgIndex: 19, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101夜光浅灰-169.jpeg" },
+  { id: 148, name: "2101兰牛仔", category: "空军", imgIndex: 20, price: "169元", specialPrice: "129元", image: "images/nike/空军/2101兰牛仔-169.jpeg" },
+  { id: 149, name: "1768465675996", category: "空军", imgIndex: 21, price: "面议", specialPrice: "", image: "images/nike/空军/1768465675996.jpeg" },
+  { id: 150, name: "1777037405527", category: "运动款", imgIndex: 1, price: "面议", specialPrice: "", image: "images/nike/运动款/1777037405527.jpeg" },
+  { id: 151, name: "1777037380109", category: "运动款", imgIndex: 2, price: "面议", specialPrice: "", image: "images/nike/运动款/1777037380109.jpeg" },
+  { id: 152, name: "1777037356489", category: "运动款", imgIndex: 3, price: "面议", specialPrice: "", image: "images/nike/运动款/1777037356489.jpeg" },
+  { id: 153, name: "1777037329462", category: "运动款", imgIndex: 4, price: "面议", specialPrice: "", image: "images/nike/运动款/1777037329462.jpeg" },
+  { id: 154, name: "1775872427746", category: "运动款", imgIndex: 5, price: "面议", specialPrice: "", image: "images/nike/运动款/1775872427746.jpeg" },
+  { id: 155, name: "1775872397612", category: "运动款", imgIndex: 6, price: "面议", specialPrice: "", image: "images/nike/运动款/1775872397612.jpeg" },
+  { id: 156, name: "9116白灰红", category: "高帮", imgIndex: 1, price: "169元", specialPrice: "129元", image: "images/nike/高帮/9116白灰红-169.jpeg" },
+  { id: 157, name: "8828白灰红", category: "高帮", imgIndex: 2, price: "169元", specialPrice: "129元", image: "images/nike/高帮/8828白灰红-169.jpeg" },
+  { id: 158, name: "8805白黑红", category: "高帮", imgIndex: 3, price: "169元", specialPrice: "129元", image: "images/nike/高帮/8805白黑红-169.jpeg" },
+  { id: 159, name: "8805白黑灰", category: "高帮", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/nike/高帮/8805白黑灰-169.jpeg" },
+  { id: 160, name: "8588白黑红", category: "高帮", imgIndex: 5, price: "169元", specialPrice: "129元", image: "images/nike/高帮/8588白黑红-169.jpeg" },
+  { id: 161, name: "8588白兰联盟", category: "高帮", imgIndex: 6, price: "169元", specialPrice: "129元", image: "images/nike/高帮/8588白兰联盟-169.jpeg" },
+  { id: 162, name: "8588兰色", category: "高帮", imgIndex: 7, price: "169元", specialPrice: "129元", image: "images/nike/高帮/8588兰色-169.jpeg" },
+  { id: 163, name: "333黑蓝", category: "高帮", imgIndex: 8, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333黑蓝-169.jpeg" },
+  { id: 164, name: "333白黑蓝", category: "高帮", imgIndex: 9, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333白黑蓝-169.jpeg" },
+  { id: 165, name: "333白黑联名", category: "高帮", imgIndex: 10, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333白黑联名-169.jpeg" },
+  { id: 166, name: "333白蓝黄", category: "高帮", imgIndex: 11, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333白蓝黄-169.jpeg" },
+  { id: 167, name: "333白兰彩虹", category: "高帮", imgIndex: 12, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333白兰彩虹-169.jpeg" },
+  { id: 168, name: "333深蓝高地", category: "高帮", imgIndex: 13, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333深蓝高地-169.jpeg" },
+  { id: 169, name: "333深海", category: "高帮", imgIndex: 14, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333深海-169.jpeg" },
+  { id: 170, name: "333大灌篮", category: "高帮", imgIndex: 15, price: "169元", specialPrice: "129元", image: "images/nike/高帮/333大灌篮-169.jpeg" },
+  { id: 171, name: "23002黑酒红", category: "高帮", imgIndex: 16, price: "169元", specialPrice: "129元", image: "images/nike/高帮/23002黑酒红-169.jpeg" },
+  { id: 172, name: "23002黑蓝", category: "高帮", imgIndex: 17, price: "169元", specialPrice: "129元", image: "images/nike/高帮/23002黑蓝-169.jpeg" },
+  { id: 173, name: "23002黑白", category: "高帮", imgIndex: 18, price: "169元", specialPrice: "129元", image: "images/nike/高帮/23002黑白-169.jpeg" },
+  { id: 174, name: "23002深蓝白", category: "高帮", imgIndex: 19, price: "169元", specialPrice: "129元", image: "images/nike/高帮/23002深蓝白-169.jpeg" },
+  { id: 175, name: "228黑深蓝", category: "高帮", imgIndex: 20, price: "169元", specialPrice: "129元", image: "images/nike/高帮/228黑深蓝-169.jpeg" },
+  { id: 176, name: "228白蓝", category: "高帮", imgIndex: 21, price: "169元", specialPrice: "129元", image: "images/nike/高帮/228白蓝-169.jpeg" },
+  { id: 177, name: "228海蓝红", category: "高帮", imgIndex: 22, price: "169元", specialPrice: "129元", image: "images/nike/高帮/228海蓝红-169.jpeg" },
+  { id: 178, name: "8901白黑金", category: "Puma", imgIndex: 1, price: "169元", specialPrice: "129元", image: "images/puma/8901白黑金-169.jpeg" },
+  { id: 179, name: "8901白兰", category: "Puma", imgIndex: 2, price: "169元", specialPrice: "129元", image: "images/puma/8901白兰-169.jpeg" },
+  { id: 180, name: "6705浅灰lv", category: "Puma", imgIndex: 3, price: "159元", specialPrice: "129元", image: "images/puma/6705浅灰lv-159.jpeg" },
+  { id: 181, name: "2528黑白", category: "Puma", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/puma/2528黑白-169.jpeg" },
+  { id: 182, name: "2528米兰白", category: "Puma", imgIndex: 5, price: "169元", specialPrice: "129元", image: "images/puma/2528米兰白-169.jpeg" },
+  { id: 183, name: "2528白黑", category: "Puma", imgIndex: 6, price: "169元", specialPrice: "129元", image: "images/puma/2528白黑-169.jpeg" },
+  { id: 184, name: "2503黑色", category: "Puma", imgIndex: 7, price: "169元", specialPrice: "129元", image: "images/puma/2503黑色-169.jpeg" },
+  { id: 185, name: "2503红色", category: "Puma", imgIndex: 8, price: "169元", specialPrice: "129元", image: "images/puma/2503红色-169.jpeg" },
+  { id: 186, name: "2503白黑", category: "Puma", imgIndex: 9, price: "169元", specialPrice: "129元", image: "images/puma/2503白黑-169.jpeg" },
+  { id: 187, name: "203黑白", category: "Puma", imgIndex: 10, price: "169元", specialPrice: "129元", image: "images/puma/203黑白-169.jpeg" },
+  { id: 188, name: "203酒红", category: "Puma", imgIndex: 11, price: "169元", specialPrice: "129元", image: "images/puma/203酒红-169.jpeg" },
+  { id: 189, name: "203深蓝", category: "Puma", imgIndex: 12, price: "169元", specialPrice: "129元", image: "images/puma/203深蓝-169.jpeg" },
+  { id: 190, name: "203浅蓝", category: "Puma", imgIndex: 13, price: "169元", specialPrice: "129元", image: "images/puma/203浅蓝-169.jpeg" },
+  { id: 191, name: "2520黑色", category: "Wans", imgIndex: 1, price: "169元", specialPrice: "129元", image: "images/wans/2520黑色-169.jpeg" },
+  { id: 192, name: "2520白色", category: "Wans", imgIndex: 2, price: "169元", specialPrice: "129元", image: "images/wans/2520白色-169.jpeg" },
+  { id: 193, name: "2421黑蝴蝶", category: "Wans", imgIndex: 3, price: "169元", specialPrice: "129元", image: "images/wans/2421黑蝴蝶-169.jpeg" },
+  { id: 194, name: "2421黑色lv", category: "Wans", imgIndex: 4, price: "169元", specialPrice: "129元", image: "images/wans/2421黑色lv-169.jpeg" },
+  { id: 195, name: "2421黑数码", category: "Wans", imgIndex: 5, price: "169元", specialPrice: "129元", image: "images/wans/2421黑数码-169.jpeg" },
+  { id: 196, name: "2421深蓝LV", category: "Wans", imgIndex: 6, price: "169元", specialPrice: "129元", image: "images/wans/2421深蓝LV-169.jpeg" },
+  { id: 197, name: "2321蓝方格", category: "Wans", imgIndex: 7, price: "169元", specialPrice: "129元", image: "images/wans/2321蓝方格-169.jpeg" },
+  { id: 198, name: "2313黑色", category: "Wans", imgIndex: 8, price: "169元", specialPrice: "129元", image: "images/wans/2313黑色-169.jpeg" },
+  { id: 199, name: "2313黑白", category: "Wans", imgIndex: 9, price: "169元", specialPrice: "129元", image: "images/wans/2313黑白-169.jpeg" },
+  { id: 200, name: "2313黑方格", category: "Wans", imgIndex: 10, price: "169元", specialPrice: "129元", image: "images/wans/2313黑方格-169.jpeg" },
+  { id: 201, name: "2313白桔", category: "Wans", imgIndex: 11, price: "169元", specialPrice: "129元", image: "images/wans/2313白桔-169.jpeg" },
+  { id: 202, name: "2313玫红", category: "Wans", imgIndex: 12, price: "169元", specialPrice: "129元", image: "images/wans/2313玫红-169.jpeg" },
+  { id: 203, name: "2313深蓝", category: "Wans", imgIndex: 13, price: "169元", specialPrice: "129元", image: "images/wans/2313深蓝-169.jpeg" }
+];
+
+    // ============================
+    //    图片路径自动生成函数【已修改】
+    //    规则：优先使用数据中的 image 字段，否则使用默认规则
+    //    images/分类名/编号.jpg
+    // ============================
+    function getShoeImage(shoe) {
+      return shoe.image || `images/${shoe.category}/${shoe.imgIndex}.jpg`;
+    }
+
+    /* ============================
+       11.2 变量定义
+       ============================ */
+
+    let currentCategory = 'all';  // 当前选中的分类，默认是"全部"
+    let currentSearchTerm = '';     // 当前搜索关键词
+
+    // 获取页面上的元素（用 ID 找到它们）
+    const gallery = document.getElementById('gallery');      // 图片展示区容器
+    const modal = document.getElementById('modal');         // 弹窗
+    const modalImage = document.getElementById('modalImage'); // 弹窗里的大图
+    const modalName = document.getElementById('modalName');  // 弹窗里的名称
+    const modalPrice = document.getElementById('modalPrice'); // 弹窗里的价格
+    const modalClose = document.getElementById('modalClose'); // 弹窗关闭按钮
+    const navBtns = document.querySelectorAll('.nav-btn');   // 所有导航按钮
+    const sectionTitle = document.querySelector('.section-title'); // 分类标题
+    const searchInput = document.getElementById('searchInput'); // 搜索输入框
+    const searchResultsCount = document.getElementById('searchResultsCount'); // 搜索结果计数
+
+    /* ============================
+       11.3 渲染图片函数【已修改】
+       
+       功能：根据传入的分类，筛选并显示对应的鞋子卡片
+       
+       参数：category - 要显示的分类名，'all' 表示显示全部
+       或者传入逗号分隔的字符串，如 "乔一,空军,小空军"
+    */
+    function renderGallery(categories) {
+      // 支持传入数组或逗号分隔的字符串
+      let categoryList;
+      if (Array.isArray(categories)) {
+        categoryList = categories;
+      } else if (typeof categories === 'string' && categories.includes(',')) {
+        categoryList = categories.split(',');
+      } else {
+        categoryList = [categories];
+      }
+
+      // 筛选数据
+      // 如果是 'all'，返回所有鞋子；否则只返回该分类的鞋子
+      const filtered = categories === 'all'
+        ? shoes
+        : shoes.filter(shoe => categoryList.includes(shoe.category));
+
+      // 如果没有内容，显示空状态提示
+      if (filtered.length === 0) {
+        gallery.innerHTML = '<div class="empty-state">暂无该分类的鞋款</div>';
+        return;
+      }
+
+      // 生成卡片 HTML
+      // map 会遍历每个鞋子，生成对应的 HTML 字符串
+      // join('') 把所有字符串合并成一个
+      gallery.innerHTML = filtered.map(shoe => `
+        <div class="card" data-id="${shoe.id}">
+          <img class="card-image" src="${getShoeImage(shoe)}" alt="${shoe.name}" loading="lazy">
+          <div class="card-info">
+            <h3 class="card-name">${shoe.name}</h3>
+            <p class="card-price">
+              ${shoe.specialPrice ? `<span class="original-price">原价：${shoe.price}</span><span class="special-price">限时特惠价 ${shoe.specialPrice}</span>` : shoe.price}
+            </p>
+            <span class="card-category">${shoe.category}</span>
+          </div>
+        </div>
+      `).join('');
+
+      // 给每个卡片绑定点击事件（打开弹窗）
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', () => {
+          // 获取卡片的 data-id 属性值，转成数字
+          const id = parseInt(card.dataset.id);
+          openModal(id);  // 打开弹窗显示这张大图
+        });
+      });
+
+      // 更新搜索结果计数
+      if (currentSearchTerm) {
+        searchResultsCount.textContent = `搜索 "${currentSearchTerm}" 找到 ${filtered.length} 个结果`;
+        searchResultsCount.style.display = 'block';
+      } else {
+        searchResultsCount.style.display = 'none';
+      }
+    }
+
+    /* ============================
+       11.4 搜索功能函数
+
+       功能：根据关键词搜索鞋款名称
+       搜索会匹配名称和价格
+    ============================ */
+    function performSearch(keyword) {
+      currentSearchTerm = keyword.trim().toLowerCase();
+
+      if (!currentSearchTerm) {
+        // 空关键词，显示当前分类的全部
+        renderGallery(currentCategory);
+        return;
+      }
+
+      // 先按分类筛选
+      let filtered = shoes;
+      if (currentCategory !== 'all') {
+        const categoryList = currentCategory.includes(',')
+          ? currentCategory.split(',')
+          : [currentCategory];
+        filtered = shoes.filter(shoe => categoryList.includes(shoe.category));
+      }
+
+      // 再按关键词筛选（匹配名称和价格）
+      filtered = filtered.filter(shoe => {
+        const nameMatch = shoe.name.toLowerCase().includes(currentSearchTerm);
+        const priceMatch = shoe.price.toLowerCase().includes(currentSearchTerm);
+        const categoryMatch = shoe.category.toLowerCase().includes(currentSearchTerm);
+        return nameMatch || priceMatch || categoryMatch;
+      });
+
+      // 显示结果
+      if (filtered.length === 0) {
+        gallery.innerHTML = '<div class="empty-state">没有找到匹配的商品</div>';
+        searchResultsCount.textContent = `搜索 "${currentSearchTerm}" 没有找到结果`;
+        searchResultsCount.style.display = 'block';
+      } else {
+        gallery.innerHTML = filtered.map(shoe => `
+          <div class="card" data-id="${shoe.id}">
+            <img class="card-image" src="${getShoeImage(shoe)}" alt="${shoe.name}" loading="lazy">
+            <div class="card-info">
+              <h3 class="card-name">${shoe.name}</h3>
+              <p class="card-price">
+                ${shoe.specialPrice ? `<span class="original-price">${shoe.price}</span><span class="special-price">限时特惠价 ${shoe.specialPrice}</span>` : shoe.price}
+              </p>
+              <span class="card-category">${shoe.category}</span>
+            </div>
+          </div>
+        `).join('');
+
+        // 绑定点击事件
+        document.querySelectorAll('.card').forEach(card => {
+          card.addEventListener('click', () => {
+            const id = parseInt(card.dataset.id);
+            openModal(id);
+          });
+        });
+
+        searchResultsCount.textContent = `搜索 "${currentSearchTerm}" 找到 ${filtered.length} 个结果`;
+        searchResultsCount.style.display = 'block';
+      }
+    }
+
+    /* ============================
+       11.4 打开弹窗函数【已修改】
+       
+       功能：显示点击的鞋子的大图和详细信息
+       
+       参数：id - 鞋子的编号
+    */
+    function openModal(id) {
+      // 从 shoes 数组中找到对应 id 的鞋子
+      const shoe = shoes.find(s => s.id === id);
+      if (!shoe) return;  // 没找到就退出
+
+      // 使用大图路径
+      modalImage.src = getShoeImage(shoe);
+      modalName.textContent = shoe.name;      // 设置名称文字
+      // 设置价格（支持特惠价）
+      modalPrice.innerHTML = shoe.specialPrice
+        ? `<span class="original-price">原价：${shoe.price}</span><span class="special-price">限时特惠价 ${shoe.specialPrice}</span>`
+        : shoe.price;
+      modal.classList.add('active');          // 显示弹窗（添加 .active 类）
+      document.body.style.overflow = 'hidden'; // 禁止页面滚动
+    }
+
+    /* ============================
+       11.5 关闭弹窗函数
+       ============================ */
+    function closeModal() {
+      modal.classList.remove('active');        // 隐藏弹窗
+      document.body.style.overflow = '';       // 恢复页面滚动
+    }
+
+    /* ============================
+       11.6 切换分类函数【已修改】
+       ============================
+
+       功能：点击导航按钮时，更新选中状态并刷新图片展示
+       主菜单点击时展开下拉菜单，点击其他主菜单时关闭当前菜单
+
+       参数：category - 要切换到的分类名
+             brandName - 品牌名称（可选）
+             isMainNav - 是否是主菜单点击（可选）
+    */
+    function switchCategory(category, brandName, isMainNav = false) {
+      currentCategory = category;  // 更新当前分类变量
+
+      // 如果是主菜单点击，展开对应的下拉菜单
+      if (isMainNav) {
+        // 找到对应的下拉菜单
+        const clickedBtn = document.querySelector(`[data-children="${category}"]`);
+        if (clickedBtn) {
+          const dropdown = clickedBtn.closest('.nav-dropdown');
+          if (dropdown) {
+            // 如果已经展开，则关闭；否则先关闭所有，再展开当前
+            if (dropdown.classList.contains('active')) {
+              dropdown.classList.remove('active');
+            } else {
+              // 先关闭所有下拉菜单
+              document.querySelectorAll('.nav-dropdown.active').forEach(d => {
+                d.classList.remove('active');
+              });
+              // 展开当前下拉菜单
+              dropdown.classList.add('active');
+            }
+          }
+        }
+      }
+
+      // 更新导航按钮的选中状态
+      navBtns.forEach(btn => {
+        // 如果这个按钮的 data-category 等于当前分类，就加上 .active
+        btn.classList.toggle('active', btn.dataset.category === category);
+      });
+
+      // 更新分类标题文字
+      if (category === 'all') {
+        sectionTitle.textContent = '全部鞋款';
+      } else if (brandName) {
+        sectionTitle.textContent = brandName;
+      } else {
+        sectionTitle.textContent = category;
+      }
+
+      // 重新渲染图片
+      renderGallery(category);
+    }
+
+    /* ============================
+       11.7 事件监听（给按钮绑定点击功能）【已修改】
+    ============================ */
+
+    // 给所有导航按钮绑定点击事件
+    navBtns.forEach(btn => {
+      // 如果是下拉菜单的触发按钮（nav-dropbtn），单独处理
+      if (btn.classList.contains('nav-dropbtn')) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation(); // 阻止冒泡
+          const dropdown = btn.closest('.nav-dropdown');
+          const children = btn.dataset.children; // 获取子分类列表
+
+          // 如果有子分类，点击主按钮显示所有子分类图片 + 展开菜单
+          if (children) {
+            // 获取品牌名称（如 "Nike"）
+            const brandName = btn.textContent.replace('▼', '').trim();
+            // 传入 isMainNav=true 表示是主菜单点击
+            switchCategory(children, brandName, true);
+          }
+        });
+      } else {
+        // 普通导航按钮
+        btn.addEventListener('click', () => {
+          // 点击"全部"按钮时关闭所有下拉菜单
+          if (btn.dataset.category === 'all') {
+            document.querySelectorAll('.nav-dropdown.active').forEach(d => {
+              d.classList.remove('active');
+            });
+          }
+          switchCategory(btn.dataset.category);
+        });
+      }
+    });
+
+    // 下拉菜单子按钮点击时，关闭菜单并切换分类
+    document.querySelectorAll('.nav-dropdown-content .nav-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // 关闭所有下拉菜单
+        document.querySelectorAll('.nav-dropdown.active').forEach(d => {
+          d.classList.remove('active');
+        });
+        // 切换到对应的分类
+        switchCategory(btn.dataset.category);
+      });
+    });
+
+    // 点击页面其他地方，关闭所有下拉菜单
+    document.addEventListener('click', (e) => {
+      // 关闭所有下拉菜单
+      if (!e.target.closest('.nav-dropdown')) {
+        document.querySelectorAll('.nav-dropdown.active').forEach(d => {
+          d.classList.remove('active');
+        });
+      }
+    });
+
+    // 点击关闭按钮关闭弹窗
+    modalClose.addEventListener('click', closeModal);
+
+    // 点击弹窗背景也能关闭弹窗
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // 按 ESC 键关闭弹窗
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    /* ============================
+       11.8 初始化（页面加载时执行）
+       ============================ */
+    // 页面打开时，默认显示所有鞋子
+    renderGallery('all');
+
+    /* ============================
+       11.9 搜索功能初始化
+       ============================ */
+    // 监听搜索框输入
+    searchInput.addEventListener('input', (e) => {
+      performSearch(e.target.value);
+    });
+
+    // 按回车搜索
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        performSearch(e.target.value);
+      }
+    });
+
+    // === A. 底部固定栏功能 ===
+    // 页面滚动时显示/隐藏底部栏
+    window.addEventListener('scroll', () => {
+      const bottomBar = document.getElementById('bottomBar');
+      if (window.scrollY > 300) {
+        bottomBar.classList.add('show');
+      } else {
+        bottomBar.classList.remove('show');
+      }
+    });
+
+  </script>
+</body>
+</html>
