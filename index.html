@@ -1076,7 +1076,7 @@ async function loadShoesFromMainSite() {
     const res = await fetch('https://aj5.netlify.app/manifest.json');
     const manifest = await res.json();
     shoes = manifest.shoes;
-    initializeGallery();
+    renderGallery("all");
     console.log('[520aj] 已从主站加载 ' + shoes.length + ' 个商品');
   } catch (e) {
     console.error('[520aj] 加载主站图片失败，使用本地备份', e);
