@@ -558,39 +558,6 @@
     }
 
     /* ============================
-       C. 卡片下方的咨询购买按钮
-       ============================ */
-    .card-buy-btn {
-      width: 100%;
-      margin-top: 14px;
-      padding: 10px;
-      background: transparent;
-      border: 1px solid rgba(7, 193, 96, 0.5);
-      border-radius: 10px;
-      color: #07c160;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .card-buy-btn:hover {
-      background: #07c160;
-      color: #fff;
-      border-color: #07c160;
-    }
-
-    .card-buy-btn svg {
-      width: 16px;
-      height: 16px;
-      fill: currentColor;
-    }
-
-    /* ============================
        7. 点击放大弹窗
        ============================ */
     .modal {
@@ -646,84 +613,6 @@
       color: #fff;
     }
 
-    /* 弹窗内的咨询购买区域 */
-    .modal-contact {
-      margin-top: 24px;
-      background: #1a1a1a;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 16px;
-      text-align: center;
-      width: 200px;
-      max-height: 30vh;
-      overflow-y: auto;
-    }
-
-    .modal-contact-title {
-      font-size: 11px;
-      color: #888;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    /* 二维码图片样式 */
-    .modal-qr {
-      width: 120px;
-      height: 120px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      background: #fff;
-      padding: 6px;
-      object-fit: contain;
-    }
-
-    .modal-wechat-label {
-      font-size: 11px;
-      color: #666;
-      margin-bottom: 4px;
-    }
-
-    .modal-wechat-id {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 12px;
-      word-break: break-all;
-    }
-
-    /* 复制按钮 */
-    .modal-copy-btn {
-      width: 100%;
-      padding: 10px;
-      background: #07c160;
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .modal-copy-btn:hover {
-      background: #06ad56;
-    }
-
-    .modal-copy-btn.copied {
-      background: #333;
-    }
-
-    .modal-copy-btn svg {
-      width: 14px;
-      height: 14px;
-      fill: currentColor;
-    }
-
     /* 弹窗关闭按钮 */
     .modal-close {
       position: absolute;
@@ -741,6 +630,25 @@
     .modal-close:hover {
       color: #fff;
     }
+
+    /* 售后说明 */
+    .modal-after-sale {
+      margin-top: 20px;
+      background: #fff5f5;
+      border: 1px solid #fdd;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .modal-after-sale-text {
+      font-size: 13px;
+      color: #c33;
+      line-height: 1.8;
+    }
+
+    /* 底部栏样式已删除 */
 
     /* ============================
        8. 空状态（当某个分类没有内容时显示）
@@ -1010,36 +918,11 @@
         <h2 class="modal-name" id="modalName"></h2>
         <p class="modal-price" id="modalPrice"></p>
       </div>
-      <!-- 咨询购买区域：二维码 + 微信ID + 复制按钮 -->
-      <div class="modal-contact">
-        <p class="modal-contact-title">扫码联系客服</p>
-        <!--
-          二维码图片：
-          把 src 改成你自己的微信二维码图片地址
-          支持本地路径（如 wechat-qr.png）或网络图片地址
-        -->
-        <img class="modal-qr" id="modalQr" src="wechat-qr.png" alt="微信二维码">
-        <!-- 微信ID（和右侧弹窗共用同一个ID，复制功能通用） -->
-        <p class="modal-wechat-label">微信号</p>
-        <p class="modal-wechat-id" id="wechatId">xdq880406</p>
-        <!-- 复制按钮 -->
-        <button class="modal-copy-btn" onclick="copyWechat()">
-          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-          复制微信号
-        </button>
+      <!-- 售后说明 -->
+      <div class="modal-after-sale">
+        <p class="modal-after-sale-text">一个月大面积脱胶断底爆皮换新，各自承担发出运费。因个人原因不喜欢的退货，买家承担25元包括但不限于发货运费打包费。</p>
       </div>
     </div>
-  </div>
-
-  <!-- ============================
-       A. 底部固定联系栏
-       ============================ -->
-  <div class="bottom-bar" id="bottomBar">
-    <!-- 招商与售后 -->
-    <div class="bottom-bar-item bottom-bar-recruitment" onclick="window.location.href='recruitment.html'">
-      <span>招商与售后</span>
-    </div>
-
   </div>
 
   <script>
