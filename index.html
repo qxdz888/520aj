@@ -998,7 +998,7 @@ let shoes = [];
 
 async function loadShoesFromMainSite() {
   try {
-    const res = await fetch('https://aj5.netlify.app/manifest.json');
+    const res = await fetch('https://aj5.netlify.app/manifest.json?t=' + Date.now());
     const manifest = await res.json();
     shoes = manifest.shoes;
     renderGallery("all");
