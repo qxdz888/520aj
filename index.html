@@ -926,35 +926,38 @@
       <div class="nav-bottom-row">
         <div class="nav-links">
           <!-- AUTO_NAV_START -->
-          <button class="nav-btn active" data-category="all">全部</button>
-          <div class="nav-dropdown">
-            <button class="nav-btn nav-dropbtn" data-category="adidas" data-children="德训,潮流,贝壳头,阿迪">
-              Adidas <span class="nav-arrow">▼</span>
-            </button>
-            <div class="nav-dropdown-content">
-          <button class="nav-btn" data-category="德训">德训</button>
-          <button class="nav-btn" data-category="潮流">潮流</button>
-          <button class="nav-btn" data-category="贝壳头">贝壳头</button>
-          <button class="nav-btn" data-category="阿迪">阿迪</button>
-          </div>
-          </div>
-          <div class="nav-dropdown">
-            <button class="nav-btn nav-dropbtn" data-category="nike" data-children="dunk,乔一,乔四,开拓者,空军,运动款,高帮">
-              Nike <span class="nav-arrow">▼</span>
-            </button>
-            <div class="nav-dropdown-content">
-          <button class="nav-btn" data-category="dunk">dunk</button>
-          <button class="nav-btn" data-category="乔一">乔一</button>
-          <button class="nav-btn" data-category="乔四">乔四</button>
-          <button class="nav-btn" data-category="开拓者">开拓者</button>
-          <button class="nav-btn" data-category="空军">空军</button>
-          <button class="nav-btn" data-category="运动款">运动款</button>
-          <button class="nav-btn" data-category="高帮">高帮</button>
-          </div>
-          </div>
-          <button class="nav-btn" data-category="LV">LV</button>
-          <button class="nav-btn" data-category="Puma">Puma</button>
-          <button class="nav-btn" data-category="Wans">Wans</button>
+        <button class="nav-btn active" data-category="all">全部</button>
+        <div class="nav-dropdown">
+          <button class="nav-btn nav-dropbtn" data-category="adidas" data-children="德训,潮流,贝壳头,阿迪">
+            Adidas <span class="nav-arrow">▼</span>
+          </button>
+          <div class="nav-dropdown-content">
+        <button class="nav-btn" data-category="德训">德训</button>
+        <button class="nav-btn" data-category="潮流">潮流</button>
+        <button class="nav-btn" data-category="贝壳头">贝壳头</button>
+        <button class="nav-btn" data-category="阿迪">阿迪</button>
+        </div>
+        </div>
+        <div class="nav-dropdown">
+          <button class="nav-btn nav-dropbtn" data-category="nike" data-children="dunk,乔一,乔四,小空军,开拓者,空军,运动款,高帮">
+            Nike <span class="nav-arrow">▼</span>
+          </button>
+          <div class="nav-dropdown-content">
+        <button class="nav-btn" data-category="dunk">dunk</button>
+        <button class="nav-btn" data-category="乔一">乔一</button>
+        <button class="nav-btn" data-category="乔四">乔四</button>
+        <button class="nav-btn" data-category="小空军">小空军</button>
+        <button class="nav-btn" data-category="开拓者">开拓者</button>
+        <button class="nav-btn" data-category="空军">空军</button>
+        <button class="nav-btn" data-category="运动款">运动款</button>
+        <button class="nav-btn" data-category="高帮">高帮</button>
+        </div>
+        </div>
+        <button class="nav-btn" data-category="Gucci">Gucci</button>
+        <button class="nav-btn" data-category="LV">LV</button>
+        <button class="nav-btn" data-category="Puma">Puma</button>
+        <button class="nav-btn" data-category="Wans">Wans</button>
+        <button class="nav-btn" data-category="亚瑟">亚瑟</button>
         <!-- AUTO_NAV_END -->
           </div>
       </div>
@@ -1036,6 +1039,14 @@
     // 从主站动态加载图片清单（自动同步）
 let shoes = [];
 
+async function loadLocalManifest() {
+  try {
+    const r = await fetch('manifest.json?t=' + Date.now());
+    const m = await r.json();
+    return m.shoes || [];
+  } catch (_) { return []; }
+}
+
 async function loadShoesFromMainSite() {
   try {
     const res = await fetch('https://aj5.netlify.app/manifest.json?t=' + Date.now());
@@ -1046,8 +1057,8 @@ async function loadShoesFromMainSite() {
   } catch (e) {
     console.error('[520aj] 加载主站图片失败，使用本地备份', e);
     // 本地备份数据（首次加载或主站不可用时使用）
-    shoes = [];
-    initializeGallery();
+    shoes = await loadLocalManifest();
+    if (shoes.length) renderGallery("all");
   }
 }
 
