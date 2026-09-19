@@ -1070,6 +1070,10 @@ loadShoesFromMainSite();
     function getShoeImage(shoe) {
       return shoe.image || `images/${shoe.category}/${shoe.imgIndex}.jpg`;
     }
+    // 列表用缩略图（体积小、秒出），点开弹窗才加载原图
+    function getShoeThumb(shoe) {
+      return shoe.thumb || getShoeImage(shoe);
+    }
 
     /* ============================
        11.2 变量定义
@@ -1077,12 +1081,6 @@ loadShoesFromMainSite();
 
     let currentCategory = 'all';  // 当前选中的分类，默认是"全部"
     let currentSearchTerm = '';     // 当前搜索关键词
-
-    // 分页状态
-    let filteredShoes = [];
-    let displayCount = 0;
-    const PAGE_SIZE = 40;
-    let isLoading = false;
 
     // 分页状态
     let filteredShoes = [];
@@ -1138,7 +1136,7 @@ loadShoesFromMainSite();
 
       const html = batch.map(shoe => `
         <div class="card" data-id="${shoe.id}">
-          <img class="card-image" src="${getShoeImage(shoe)}" alt="${shoe.name}" loading="lazy">
+          <img class="card-image" src="${getShoeThumb(shoe)}" alt="${shoe.name}" loading="lazy" decoding="async">
           <div class="card-info">
             <h3 class="card-name">${shoe.name}</h3>
             <p class="card-price">
