@@ -5,6 +5,9 @@
   <!-- viewport 适配手机屏幕，确保在手机上正常显示 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>520AJ 球鞋展示</title>
+  <!-- 预连接主站图片源，加速首屏后台刷新 -->
+  <link rel="preconnect" href="https://aj5.netlify.app" crossorigin>
+  <link rel="dns-prefetch" href="https://aj5.netlify.app">
 
   <style>
     /* ============================
@@ -927,37 +930,25 @@
         <div class="nav-links">
           <!-- AUTO_NAV_START -->
         <button class="nav-btn active" data-category="all">全部</button>
-        <div class="nav-dropdown">
-          <button class="nav-btn nav-dropbtn" data-category="adidas" data-children="德训,潮流,贝壳头,阿迪">
-            Adidas <span class="nav-arrow">▼</span>
-          </button>
-          <div class="nav-dropdown-content">
-        <button class="nav-btn" data-category="德训">德训</button>
-        <button class="nav-btn" data-category="潮流">潮流</button>
-        <button class="nav-btn" data-category="贝壳头">贝壳头</button>
-        <button class="nav-btn" data-category="阿迪">阿迪</button>
-        </div>
-        </div>
-        <div class="nav-dropdown">
-          <button class="nav-btn nav-dropbtn" data-category="nike" data-children="dunk,乔一,乔四,小空军,开拓者,空军,运动款,高帮">
-            Nike <span class="nav-arrow">▼</span>
-          </button>
-          <div class="nav-dropdown-content">
-        <button class="nav-btn" data-category="dunk">dunk</button>
+        <button class="nav-btn" data-category="312">312</button>
+        <button class="nav-btn" data-category="ad">ad</button>
+        <button class="nav-btn" data-category="aj">aj</button>
+        <button class="nav-btn" data-category="lv">lv</button>
+        <button class="nav-btn" data-category="nk高帮">nk高帮</button>
+        <button class="nav-btn" data-category="pm">pm</button>
+        <button class="nav-btn" data-category="ws">ws</button>
         <button class="nav-btn" data-category="乔一">乔一</button>
-        <button class="nav-btn" data-category="乔四">乔四</button>
+        <button class="nav-btn" data-category="亚瑟">亚瑟</button>
+        <button class="nav-btn" data-category="回力">回力</button>
         <button class="nav-btn" data-category="小空军">小空军</button>
         <button class="nav-btn" data-category="开拓者">开拓者</button>
+        <button class="nav-btn" data-category="潮ng">潮ng</button>
+        <button class="nav-btn" data-category="潮rez">潮rez</button>
+        <button class="nav-btn" data-category="皮鞋">皮鞋</button>
         <button class="nav-btn" data-category="空军">空军</button>
+        <button class="nav-btn" data-category="自z">自z</button>
         <button class="nav-btn" data-category="运动款">运动款</button>
-        <button class="nav-btn" data-category="高帮">高帮</button>
-        </div>
-        </div>
-        <button class="nav-btn" data-category="Gucci">Gucci</button>
-        <button class="nav-btn" data-category="LV">LV</button>
-        <button class="nav-btn" data-category="Puma">Puma</button>
-        <button class="nav-btn" data-category="Wans">Wans</button>
-        <button class="nav-btn" data-category="亚瑟">亚瑟</button>
+        <button class="nav-btn" data-category="鸿b">鸿b</button>
         <!-- AUTO_NAV_END -->
           </div>
       </div>
@@ -1048,17 +1039,24 @@ async function loadLocalManifest() {
 }
 
 async function loadShoesFromMainSite() {
+  // 1) 先读本地快照（同域、瞬间返回），首屏立即渲染，不被跨网请求阻塞
+  const local = await loadLocalManifest();
+  if (local.length) {
+    shoes = local;
+    renderGallery('all');
+    console.log('[520aj] 本地快照秒出 ' + shoes.length + ' 个商品');
+  }
+  // 2) 后台静默拉取主站最新数据，不阻塞首屏；数据更多才覆盖重渲染
   try {
     const res = await fetch('https://aj5.netlify.app/manifest.json?t=' + Date.now());
     const manifest = await res.json();
-    shoes = manifest.shoes;
-    renderGallery("all");
-    console.log('[520aj] 已从主站加载 ' + shoes.length + ' 个商品');
+    if (manifest.shoes && manifest.shoes.length >= shoes.length) {
+      shoes = manifest.shoes;
+      renderGallery(currentCategory);
+      console.log('[520aj] 已后台更新为主站 ' + shoes.length + ' 个商品');
+    }
   } catch (e) {
-    console.error('[520aj] 加载主站图片失败，使用本地备份', e);
-    // 本地备份数据（首次加载或主站不可用时使用）
-    shoes = await loadLocalManifest();
-    if (shoes.length) renderGallery("all");
+    console.warn('[520aj] 主站刷新失败，沿用本地快照', e);
   }
 }
 
