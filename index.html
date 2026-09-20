@@ -5,8 +5,8 @@
   <!-- viewport 适配手机屏幕，确保在手机上正常显示 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>520AJ 球鞋展示</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://workbuddy-d5g0sqo2r36ca45b3-1253831416.tcloudbaseapp.com" crossorigin>
+  <link rel="dns-prefetch" href="https://workbuddy-d5g0sqo2r36ca45b3-1253831416.tcloudbaseapp.com">
   <!-- 预连接主站图片源，加速首屏后台刷新 -->
   <link rel="preconnect" href="https://aj5.netlify.app" crossorigin>
   <link rel="dns-prefetch" href="https://aj5.netlify.app">
@@ -1069,6 +1069,16 @@ loadShoesFromMainSite();
     //    规则：优先使用数据中的 image 字段，否则使用默认规则
     //    images/分类名/编号.jpg
     // ============================
+    // 国内图床加载失败自动回退 jsDelivr（每张图只回退一次）
+    const CDN_MAIN = "https://workbuddy-d5g0sqo2r36ca45b3-1253831416.tcloudbaseapp.com/";
+    const CDN_FALLBACK = "https://cdn.jsdelivr.net/gh/qxdz888/aj5@main/";
+    function imgFallback(el) {
+      if (!el || el.dataset.fallback) return;
+      el.dataset.fallback = '1';
+      if (el.src && el.src.indexOf(CDN_MAIN) === 0) {
+        el.src = CDN_FALLBACK + el.src.slice(CDN_MAIN.length);
+      }
+    }
     function getShoeImage(shoe) {
       return shoe.image || `images/${shoe.category}/${shoe.imgIndex}.jpg`;
     }
@@ -1138,7 +1148,7 @@ loadShoesFromMainSite();
 
       const html = batch.map(shoe => `
         <div class="card" data-id="${shoe.id}">
-          <img class="card-image" src="${getShoeThumb(shoe)}" alt="${shoe.name}" loading="lazy" decoding="async">
+          <img class="card-image" src="${getShoeThumb(shoe)}" alt="${shoe.name}" loading="lazy" decoding="async" onerror="imgFallback(this)">
           <div class="card-info">
             <h3 class="card-name">${shoe.name}</h3>
             <p class="card-price">
@@ -1249,6 +1259,8 @@ loadShoesFromMainSite();
       if (!shoe) return;  // 没找到就退出
 
       // 使用大图路径
+      modalImage.dataset.fallback = '';
+      modalImage.onerror = function () { imgFallback(this); };
       modalImage.src = getShoeImage(shoe);
       modalName.textContent = shoe.name;      // 设置名称文字
       // 设置价格（支持特惠价）
