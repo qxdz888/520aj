@@ -490,6 +490,7 @@
     /* 单个卡片样式 */
     .card {
       background: #1a1a1a;       /* 卡片背景色 */
+      position: relative;        /* 角标定位基准（新款/热销） */
       border-radius: 16px;       /* 圆角 */
       overflow: hidden;          /* 图片超出部分隐藏 */
       cursor: pointer;           /* 手型光标 */
@@ -1051,6 +1052,33 @@
         font-size: 13px;
       }
     }
+  /* 新款角标：蓝底白字，右上角（数据层 badges.json badge=new） */
+  .card-badge--new {
+    display: inline-flex !important;
+    position: absolute !important; right: 8px; top: 8px; left: auto !important; z-index: 3;
+    align-items: center;
+    height: 18px; padding: 0 6px; margin: 0;
+    border-radius: 4px;
+    font-size: 10px; font-weight: 600; line-height: 1;
+    color: #fff !important; background: #1677ff !important;
+  }
+  /* 热销角标：红底白字，右上角（数据层 badges.json badge=hot） */
+  .card-badge--topsell {
+    display: inline-flex !important;
+    position: absolute !important; right: 8px; top: 8px; left: auto !important; z-index: 3;
+    align-items: center;
+    height: 18px; padding: 0 6px; margin: 0;
+    border-radius: 4px;
+    font-size: 10px; font-weight: 600; line-height: 1;
+    color: #fff !important; background: #f53f3f !important;
+  }
+  /* 详情页：角标跟在名称后面（取消卡片内的绝对定位） */
+  .detail-panel .card-badge {
+    position: static !important;
+    display: inline-flex !important;
+    margin-left: 8px; vertical-align: middle;
+    height: 20px; font-size: 11px;
+  }
   </style>
 </head>
 <body>
@@ -1154,7 +1182,7 @@
       <!-- 右侧：信息面板（浅色底 + 深色字） -->
       <div class="detail-panel">
         <div class="modal-info">
-          <h2 class="modal-name" id="modalName"></h2>
+          <h2 class="modal-name" id="modalName"></h2><span id="modalBadge"></span>
           <!-- 价格：零售价（划线）+ 特惠价（aj 恒 129）；非 aj 只显示零售价 -->
           <div class="modal-price" id="modalPrice"></div>
           <!-- 运费说明 -->
@@ -1273,6 +1301,7 @@ loadShoesFromMainSite();
     const modal = document.getElementById('modal');         // 弹窗
     const modalImage = document.getElementById('modalImage'); // 弹窗里的大图
     const modalName = document.getElementById('modalName');  // 弹窗里的名称
+    const modalBadge = document.getElementById('modalBadge'); // 弹窗里的角标（新款/热销）
     const modalPrice = document.getElementById('modalPrice'); // 弹窗里的价格
     const modalShipping = document.getElementById('modalShipping'); // 弹窗里的运费说明
     const modalClose = document.getElementById('modalClose'); // 弹窗关闭按钮
@@ -1317,6 +1346,7 @@ loadShoesFromMainSite();
 
       const html = batch.map(shoe => `
         <div class="card" data-id="${shoe.id}">
+          ${newBadge(shoe)}${hotBadge(shoe)}
           <img class="card-image" src="${getShoeThumb(shoe)}" alt="${shoe.name}" loading="lazy" decoding="async" onerror="imgFallback(this)">
           <div class="card-info">
             <h3 class="card-name">${shoe.name}</h3>
@@ -1419,6 +1449,20 @@ loadShoesFromMainSite();
        11.3c 价格渲染函数
        规则：aj 显示 零售价(划线) + 特惠价129；非 aj 只显示零售价
        ============================ */
+    /* 新款/热销角标（数据层 badges.json 经主站 manifest 同步） */
+    function newBadge(shoe) {
+      if (shoe && shoe.badge === 'new') {
+        return '<span class="card-badge card-badge--new">新款</span>';
+      }
+      return '';
+    }
+    function hotBadge(shoe) {
+      if (shoe && shoe.badge === 'hot') {
+        return '<span class="card-badge card-badge--topsell">热销</span>';
+      }
+      return '';
+    }
+
     function priceHTML(shoe) {
       const label = (t) => `<span class="price-label">${t}</span>`;
       if (shoe.topCategory === 'aj') {
@@ -1441,6 +1485,10 @@ loadShoesFromMainSite();
       modalImage.onerror = function () { imgFallback(this); };
       modalImage.src = getShoeImage(shoe);
       modalName.textContent = shoe.name;      // 设置名称文字
+      // 名称后跟随新款/热销角标（与卡片一致）
+      modalBadge.innerHTML = shoe.badge === 'new'
+        ? '<span class="card-badge card-badge--new">新款</span>'
+        : (shoe.badge === 'hot' ? '<span class="card-badge card-badge--topsell">热销</span>' : '');
       // 设置价格（零售价 + 特惠价）
       modalPrice.innerHTML = priceHTML(shoe);
       // 运费
