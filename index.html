@@ -545,6 +545,35 @@
       font-weight: 400;
     }
 
+    /* 原价（文字版，划线） */
+    .price-origin {
+      font-size: 13px;
+      color: #999;
+      text-decoration: line-through;
+      font-weight: 400;
+    }
+
+    /* 非特惠商品的唯一价格 */
+    .price-plain {
+      font-size: 14px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* 价格行标签（零售价/特惠价） */
+    .price-label {
+      font-size: 10px;
+      color: #999;
+      font-weight: 400;
+    }
+
+    /* 卡片上的价格行 */
+    .card-price .price-line {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
     /* 特惠价 */
     .special-price {
       color: #ff4444;
@@ -564,7 +593,8 @@
     }
 
     /* ============================
-       7. 点击放大弹窗
+       7. 商品详情页（点图进入，全屏：左大图 + 右浅色信息面板）
+       配色原则：信息面板浅色底 + 深色字，杜绝黑配灰看不清
        ============================ */
     .modal {
       display: none;             /* 默认隐藏 */
@@ -573,11 +603,11 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.95); /* 半透明黑色背景 */
+      background: rgba(0, 0, 0, 0.92); /* 半透明黑色背景 */
       z-index: 1000;             /* 位于所有内容之上 */
       align-items: center;
       justify-content: center;
-      padding: 40px;
+      padding: 24px;
     }
 
     /* 弹窗：显示状态（通过 JS 添加 .active 类来显示） */
@@ -586,73 +616,162 @@
     }
 
     .modal-content {
-      max-width: 90%;            /* 最大宽度90% */
-      max-height: 90%;
       position: relative;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      width: 100%;
+      max-width: 1080px;
+      height: min(86vh, 780px);
+      background: #141414;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
     }
 
-    /* 弹窗内的大图 */
+    /* 左侧：大图区（深色底，突出商品） */
+    .detail-figure {
+      flex: 1.15;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d0d;
+      padding: 28px;
+    }
+
+    /* 详情页内的大图 */
     .modal-image {
       max-width: 100%;
-      max-height: 55vh;          /* 最大高度55%的视口高度，给联系区留空间 */
+      max-height: 100%;
+      object-fit: contain;
       border-radius: 12px;
       display: block;
     }
 
-    .modal-info {
-      text-align: center;
-      margin-top: 24px;
+    /* 右侧：信息面板（浅色底 + 深色字，对比清晰） */
+    .detail-panel {
+      width: 400px;
+      flex-shrink: 0;
+      background: #f6f6f7;
+      color: #1f2329;
+      padding: 36px 32px 28px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 6px;
+      overflow-y: auto;
+    }
+
+    .modal-info {
+      flex: 1;
     }
 
     .modal-name {
-      font-size: 32px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 2px;
-      text-shadow: 0 2px 10px rgba(231, 76, 60, 0.4);
-      margin-bottom: 4px;
-    }
-
-    .modal-price {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 800;
-      color: #fff;
+      margin-bottom: 18px;
+      color: #111;
+      line-height: 1.35;
     }
 
-    /* 弹窗关闭按钮 */
+    /* 价格区：零售价 + 特惠价 两行 */
+    .modal-price {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px 18px;
+      background: #fff;
+      border: 1px solid #e6e6e8;
+      border-radius: 14px;
+    }
+
+    .price-line {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .price-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    /* 零售价：划线（浅面板上的中灰，清晰可读） */
+    .modal-price .price-origin {
+      font-size: 16px;
+      color: #6b7280;
+      text-decoration: line-through;
+      font-weight: 500;
+    }
+
+    /* 非特惠商品唯一价格 */
+    .modal-price .price-plain {
+      font-size: 18px;
+      color: #1f2329;
+      font-weight: 700;
+    }
+
+    /* 特惠价：红色大字 */
+    .modal-price .special-price {
+      font-size: 30px;
+      color: #e5484d;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    /* 运费说明（浅面板深字） */
+    .modal-shipping {
+      margin-top: 14px;
+      font-size: 14px;
+      color: #4b5563;
+      letter-spacing: 0.5px;
+    }
+
+    /* 退换货说明条：浅琥珀底 + 深棕字（对比清晰） */
+    .modal-return {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #8a5a00;
+      background: #fff7e6;
+      border: 1px solid #f3dcb8;
+      border-radius: 10px;
+      padding: 10px 14px;
+      letter-spacing: 0.5px;
+    }
+
+    /* 关闭按钮（位于信息面板右上，深色字清晰可见） */
     .modal-close {
       position: absolute;
-      top: -50px;               /* 位于图片上方 */
-      right: 0;
-      background: none;
+      top: 14px;
+      right: 14px;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.92);
       border: none;
-      color: #888;
-      font-size: 32px;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      color: #374151;
+      font-size: 24px;
+      line-height: 1;
       cursor: pointer;
-      padding: 10px;
-      transition: color 0.3s;
+      transition: background 0.3s, color 0.3s;
     }
 
     .modal-close:hover {
-      color: #fff;
+      background: #fff;
+      color: #111;
     }
 
     /* 售后说明 */
     .modal-after-sale {
-      margin-top: 24px;
+      margin-top: 22px;
       background: linear-gradient(135deg, #fff8f0 0%, #fff0f0 100%);
       border: 1px solid rgba(231, 76, 60, 0.2);
       border-radius: 16px;
       padding: 20px 24px;
       text-align: center;
-      max-width: 420px;
+      max-width: 100%;
       box-shadow: 0 4px 20px rgba(231, 76, 60, 0.08);
       position: relative;
       overflow: hidden;
@@ -717,6 +836,34 @@
       .navbar {
         position: fixed;
         width: 100%;
+      }
+
+      /* 详情页手机优化：上下布局（上图 + 下面板，整体可滚动） */
+      .modal { padding: 12px; }
+      .modal-content {
+        flex-direction: column;
+        max-width: 520px;
+        height: 92vh;
+        border-radius: 16px;
+      }
+      .detail-figure {
+        flex: none;
+        height: 40vh;
+        padding: 16px;
+      }
+      .detail-panel {
+        width: 100%;
+        flex: 1;
+        padding: 22px 18px 20px;
+      }
+      .modal-name { font-size: 17px; margin-bottom: 12px; }
+      .modal-price { padding: 12px 14px; }
+      .modal-price .special-price { font-size: 24px; }
+      .modal-return { font-size: 12px; padding: 8px 12px; }
+      .modal-close {
+        width: 32px; height: 32px;
+        font-size: 20px;
+        top: 10px; right: 10px;
       }
 
       /* 导航栏容器 - 两行布局 */
@@ -931,7 +1078,7 @@
       <div class="nav-bottom-row">
         <div class="nav-links">
           <!-- AUTO_NAV_START -->
-        <button class="nav-btn active" data-top="all" data-category="all">全部</button>
+<button class="nav-btn active" data-top="all" data-category="all">全部</button>
         <div class="nav-dropdown">
       <button class="nav-btn nav-dropbtn" data-top="aj" data-children="312,adidas,lv,nk高帮,puma,wans,乔一,亚瑟,小空军,开拓者,空军,运动款">
         aj <span class="nav-arrow">▼</span>
@@ -963,7 +1110,7 @@
         <button class="nav-btn" data-top="潮ng">潮ng</button>
         <button class="nav-btn" data-top="潮rez">潮rez</button>
         <button class="nav-btn" data-top="鸿b">鸿b</button>
-        <!-- AUTO_NAV_END -->
+<!-- AUTO_NAV_END -->
           </div>
       </div>
     </div>
@@ -995,22 +1142,31 @@
     <button class="load-more-btn" id="loadMoreBtn">加载更多</button>
   </div>
 
-  <!-- 点击图片后的放大弹窗 -->
+  <!-- 点击图片后进入的商品详情页（左大图 + 右信息面板） -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <!-- 关闭按钮（× 号） -->
       <button class="modal-close" id="modalClose">&times;</button>
-      <!-- 大图展示 -->
-      <img class="modal-image" id="modalImage" src="" alt="">
-      <!-- 图片下方的文字信息 -->
-      <div class="modal-info">
-        <h2 class="modal-name" id="modalName"></h2>
-        <p class="modal-price" id="modalPrice"></p>
+      <!-- 左侧：商品大图 -->
+      <div class="detail-figure">
+        <img class="modal-image" id="modalImage" src="" alt="">
       </div>
-      <!-- 售后说明 -->
-      <div class="modal-after-sale">
-        <div class="modal-after-sale-label">售后保障</div>
-        <p class="modal-after-sale-text">一个月大面积脱胶断底爆皮换新，各自承担发出运费。<br>因个人原因不喜欢的退货，买家承担25元包括但不限于发货运费打包费。</p>
+      <!-- 右侧：信息面板（浅色底 + 深色字） -->
+      <div class="detail-panel">
+        <div class="modal-info">
+          <h2 class="modal-name" id="modalName"></h2>
+          <!-- 价格：零售价（划线）+ 特惠价（aj 恒 129）；非 aj 只显示零售价 -->
+          <div class="modal-price" id="modalPrice"></div>
+          <!-- 运费说明 -->
+          <p class="modal-shipping" id="modalShipping">运费 7 元</p>
+          <!-- 退换货说明 -->
+          <p class="modal-return" id="modalReturn">退换货运费买家承担！</p>
+        </div>
+        <!-- 售后说明 -->
+        <div class="modal-after-sale">
+          <div class="modal-after-sale-label">售后保障</div>
+          <p class="modal-after-sale-text">一个月大面积脱胶断底爆皮换新，各自承担发出运费。<br>因个人原因不喜欢的退货，买家承担25元包括但不限于发货运费打包费。</p>
+        </div>
       </div>
     </div>
   </div>
@@ -1118,6 +1274,7 @@ loadShoesFromMainSite();
     const modalImage = document.getElementById('modalImage'); // 弹窗里的大图
     const modalName = document.getElementById('modalName');  // 弹窗里的名称
     const modalPrice = document.getElementById('modalPrice'); // 弹窗里的价格
+    const modalShipping = document.getElementById('modalShipping'); // 弹窗里的运费说明
     const modalClose = document.getElementById('modalClose'); // 弹窗关闭按钮
     const navBtns = document.querySelectorAll('.nav-btn');   // 所有导航按钮
     const sectionTitle = document.querySelector('.section-title'); // 分类标题
@@ -1164,7 +1321,7 @@ loadShoesFromMainSite();
           <div class="card-info">
             <h3 class="card-name">${shoe.name}</h3>
             <p class="card-price">
-              ${shoe.specialPrice ? `<span class="original-price">原价：${shoe.price}</span><span class="special-price">限时特惠价 ${shoe.specialPrice}</span>` : shoe.price}
+              ${priceHTML(shoe)}
             </p>
             <span class="card-category">${shoe.category}</span>
           </div>
@@ -1259,12 +1416,21 @@ loadShoesFromMainSite();
     }
 
     /* ============================
-       11.4 打开弹窗函数【已修改】
-       
-       功能：显示点击的鞋子的大图和详细信息
-       
-       参数：id - 鞋子的编号
-    */
+       11.3c 价格渲染函数
+       规则：aj 显示 零售价(划线) + 特惠价129；非 aj 只显示零售价
+       ============================ */
+    function priceHTML(shoe) {
+      const label = (t) => `<span class="price-label">${t}</span>`;
+      if (shoe.topCategory === 'aj') {
+        return `<span class="price-line">${label('零售价')}<span class="price-origin">${shoe.price || ''}</span></span>`
+             + `<span class="price-line">${label('特惠价')}<span class="special-price">129元</span></span>`;
+      }
+      return `<span class="price-line">${label('零售价')}<span class="price-plain">${shoe.price || ''}</span></span>`;
+    }
+
+    /* ============================
+       11.4 打开弹窗函数
+    ============================ */
     function openModal(id) {
       // 从 shoes 数组中找到对应 id 的鞋子
       const shoe = shoes.find(s => s.id === id);
@@ -1275,12 +1441,17 @@ loadShoesFromMainSite();
       modalImage.onerror = function () { imgFallback(this); };
       modalImage.src = getShoeImage(shoe);
       modalName.textContent = shoe.name;      // 设置名称文字
-      // 设置价格（支持特惠价）
-      modalPrice.innerHTML = shoe.specialPrice
-        ? `<span class="original-price">原价：${shoe.price}</span><span class="special-price">限时特惠价 ${shoe.specialPrice}</span>`
-        : shoe.price;
+      // 设置价格（零售价 + 特惠价）
+      modalPrice.innerHTML = priceHTML(shoe);
+      // 运费
+      modalShipping.textContent = '运费 7 元';
       modal.classList.add('active');          // 显示弹窗（添加 .active 类）
       document.body.style.overflow = 'hidden'; // 禁止页面滚动
+
+      // 写入 hash（#p-商品id），刷新/分享链接可直接打开该详情页
+      if (history.replaceState) {
+        history.replaceState(null, '', location.pathname + location.search + '#p-' + id);
+      }
     }
 
     /* ============================
@@ -1289,6 +1460,23 @@ loadShoesFromMainSite();
     function closeModal() {
       modal.classList.remove('active');        // 隐藏弹窗
       document.body.style.overflow = '';       // 恢复页面滚动
+      if (location.hash.indexOf('#p-') === 0 && history.replaceState) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+    }
+
+    /* 从 hash 打开详情页（#p-123）；数据未就绪时轮询等待（最多 10 秒） */
+    function openDetailFromHash() {
+      const m = location.hash.match(/^#p-(\d+)$/);
+      if (!m) return;
+      const id = parseInt(m[1], 10);
+      if (shoes.find(s => s.id === id)) { openModal(id); return; }
+      let tries = 0;
+      const timer = setInterval(() => {
+        tries++;
+        if (shoes.find(s => s.id === id)) { clearInterval(timer); openModal(id); }
+        else if (tries > 20) { clearInterval(timer); }
+      }, 500);
     }
 
     /* ============================
@@ -1422,6 +1610,13 @@ loadShoesFromMainSite();
        ============================ */
     // 页面打开时，默认显示所有鞋子
     renderGallery('all');
+
+    // 若 URL 带 #p-商品id（如分享的详情页链接），直接打开对应详情页
+    openDetailFromHash();
+    window.addEventListener('hashchange', () => {
+      if (/^#p-\d+$/.test(location.hash)) openDetailFromHash();
+      else if (modal.classList.contains('active')) closeModal();
+    });
 
     /* ============================
        11.9 搜索功能初始化
