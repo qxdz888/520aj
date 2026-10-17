@@ -1368,8 +1368,18 @@ loadShoesFromMainSite();
   const titleEl = document.getElementById('festivalTitle');
   const descEl  = document.getElementById('festivalDesc');
 
+  // 取当前生效的节日状态（?fest= 预览参数优先）
+  function getPromoState520() {
+    let forced = null;
+    try { forced = new URLSearchParams(location.search).get('fest'); } catch (e) {}
+    if (forced && FESTIVALS_520.some(f => f.key === forced)) {
+      return { active: true, festival: FESTIVALS_520.find(f => f.key === forced) };
+    }
+    return isPromoNow520();
+  }
+
   function applyFestivalTheme520() {
-    const r = isPromoNow520();
+    const r = getPromoState520();
     const body = document.body;
     FESTIVAL_KEYS_520.split(' ').forEach(k => body.classList.remove(k));
     if (r.active && r.festival) {
@@ -1389,7 +1399,7 @@ loadShoesFromMainSite();
     return m ? m[1] : null;
   })();
   setInterval(function () {
-    const r = isPromoNow520();
+    const r = getPromoState520();
     const nowKey = (r.active && r.festival) ? r.festival.key : null;
     if (nowKey === lastKey) return;
     lastKey = nowKey;
