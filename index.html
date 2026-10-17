@@ -1089,6 +1089,83 @@
     margin-left: 8px; vertical-align: middle;
     height: 20px; font-size: 11px;
   }
+
+  /* ============================
+     节日横幅（520aj 轻量版：顶部通栏 + 每节日一版主题色）
+     默认隐藏，节日期间由 JS 挂 body.festival-mode.festival-<key> 显示
+     ============================ */
+  body {
+    --f-banner-bg: linear-gradient(135deg, #8B1A1A 0%, #C1272D 50%, #8B1A1A 100%);
+    --f-banner-line: rgba(232, 196, 106, 0.55);
+    --f-banner-glow: rgba(193, 39, 45, 0.28);
+  }
+  body.festival-mode.festival-newyear {
+    --f-banner-bg: linear-gradient(135deg, #6E1030 0%, #B4254F 50%, #6E1030 100%);
+    --f-banner-line: rgba(242, 201, 76, 0.55); --f-banner-glow: rgba(180, 37, 79, 0.30);
+  }
+  body.festival-mode.festival-cny {
+    --f-banner-bg: linear-gradient(135deg, #7A1414 0%, #B01F24 50%, #7A1414 100%);
+    --f-banner-line: rgba(255, 210, 77, 0.55); --f-banner-glow: rgba(176, 31, 36, 0.30);
+  }
+  body.festival-mode.festival-labor {
+    --f-banner-bg: linear-gradient(135deg, #8A4A0E 0%, #D97A16 50%, #8A4A0E 100%);
+    --f-banner-line: rgba(255, 177, 61, 0.55); --f-banner-glow: rgba(215, 122, 22, 0.30);
+  }
+  body.festival-mode.festival-midyear {
+    --f-banner-bg: linear-gradient(135deg, #8F120C 0%, #E1251B 50%, #8F120C 100%);
+    --f-banner-line: rgba(255, 122, 107, 0.55); --f-banner-glow: rgba(225, 37, 27, 0.30);
+  }
+  body.festival-mode.festival-nationalday {
+    --f-banner-bg: linear-gradient(135deg, #8C1A08 0%, #DE2910 50%, #8C1A08 100%);
+    --f-banner-line: rgba(255, 215, 0, 0.55); --f-banner-glow: rgba(222, 41, 16, 0.30);
+  }
+  body.festival-mode.festival-double11 {
+    --f-banner-bg: linear-gradient(135deg, #7A0A14 0%, #C81623 50%, #7A0A14 100%);
+    --f-banner-line: rgba(255, 107, 133, 0.55); --f-banner-glow: rgba(200, 22, 35, 0.30);
+  }
+  body.festival-mode.festival-double12 {
+    --f-banner-bg: linear-gradient(135deg, #9C3208 0%, #FF5000 50%, #9C3208 100%);
+    --f-banner-line: rgba(255, 138, 61, 0.55); --f-banner-glow: rgba(255, 80, 0, 0.30);
+  }
+  #festivalBanner {
+    display: none;                 /* 默认隐藏（日常模式） */
+    position: relative;
+    margin-top: 70px;              /* 避让 fixed 导航栏（桌面端行高） */
+    text-align: center;
+    padding: 12px 16px;
+    color: #FFF5E6;
+    font-size: 14px;
+    letter-spacing: 1px;
+    background: var(--f-banner-bg);
+    border-top: 1px solid var(--f-banner-line);
+    border-bottom: 1px solid var(--f-banner-line);
+    box-shadow: 0 4px 18px var(--f-banner-glow);
+    overflow: hidden;
+  }
+  body.festival-mode #festivalBanner { display: block; }
+  /* 横幅显示时把 .banner 原本的避让清零，改由横幅承担，避免双份空隙 */
+  body.festival-mode .banner { margin-top: 0; }
+  #festivalBanner .fb-inner {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; flex-wrap: wrap;
+  }
+  #festivalBanner .fb-emoji { font-size: 18px; line-height: 1; }
+  #festivalBanner .fb-title { font-weight: 800; letter-spacing: 2px; }
+  #festivalBanner .fb-sep {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(255, 233, 200, 0.6); flex-shrink: 0;
+  }
+  #festivalBanner .fb-cta {
+    padding: 4px 12px; font-size: 12px; font-weight: 700;
+    border-radius: 14px; border: 1px solid rgba(255, 233, 200, 0.7);
+    background: rgba(255, 233, 200, 0.14); color: #FFF8E8;
+    cursor: pointer; white-space: nowrap;
+  }
+  #festivalBanner .fb-cta:hover { background: #FFD97A; border-color: #FFD97A; color: #2A1206; }
+  @media (max-width: 768px) {
+    #festivalBanner { margin-top: 120px; font-size: 12px; }
+    #festivalBanner .fb-sep { display: none; }
+  }
   </style>
 </head>
 <body>
@@ -1096,6 +1173,17 @@
   <!-- ============================
        10. HTML 结构部分
        ============================ -->
+
+  <!-- 节日横幅（默认隐藏，节日期间由 JS 挂 body class 显示并填文案） -->
+  <div id="festivalBanner" role="region" aria-label="节日活动公告">
+    <div class="fb-inner">
+      <span class="fb-emoji" id="festivalEmoji" aria-hidden="true">🎊</span>
+      <span class="fb-title" id="festivalTitle">节日特惠</span>
+      <span class="fb-sep" aria-hidden="true"></span>
+      <span id="festivalDesc">限时特惠进行中</span>
+      <button class="fb-cta" type="button" id="festivalCta">立即查看</button>
+    </div>
+  </div>
 
   <!-- 顶部导航栏 -->
   <nav class="navbar">
@@ -1270,6 +1358,45 @@ async function loadShoesFromMainSite() {
 
 loadShoesFromMainSite();
 
+/* ============================
+   节日主题（520aj 轻量版）：按内置节日表挂 body class + 填横幅文案
+   每节日一版主题色（见 CSS .festival-<key>），跨节日界限 60s 轮询自动切换
+   ============================ */
+(function initFestivalTheme520() {
+  const FESTIVAL_KEYS_520 = FESTIVALS_520.map(f => 'festival-' + f.key).join(' ');
+  const emojiEl = document.getElementById('festivalEmoji');
+  const titleEl = document.getElementById('festivalTitle');
+  const descEl  = document.getElementById('festivalDesc');
+
+  function applyFestivalTheme520() {
+    const r = isPromoNow520();
+    const body = document.body;
+    FESTIVAL_KEYS_520.split(' ').forEach(k => body.classList.remove(k));
+    if (r.active && r.festival) {
+      body.classList.add('festival-mode', 'festival-' + r.festival.key);
+      if (emojiEl) emojiEl.textContent = r.festival.emoji || '🎊';
+      if (titleEl) titleEl.textContent = r.festival.name + '特惠';
+      if (descEl) descEl.textContent = (r.festival.desc || '限时特惠') + ' · 两双以上包邮';
+    } else {
+      body.classList.remove('festival-mode');
+    }
+  }
+
+  applyFestivalTheme520();
+  // 跨节日界限（如双11→双12）自动换主题：记录当前节日 key，变了才重挂
+  let lastKey = (function () {
+    const m = document.body.className.match(/festival-(\w+)/);
+    return m ? m[1] : null;
+  })();
+  setInterval(function () {
+    const r = isPromoNow520();
+    const nowKey = (r.active && r.festival) ? r.festival.key : null;
+    if (nowKey === lastKey) return;
+    lastKey = nowKey;
+    applyFestivalTheme520();
+  }, 60000);
+})();
+
     // ============================
     //    图片路径自动生成函数【已修改】
     //    规则：优先使用数据中的 image 字段，否则使用默认规则
@@ -1299,13 +1426,13 @@ loadShoesFromMainSite();
        ============================ */
 
     const FESTIVALS_520 = [
-      { key: 'newyear',     name: '元旦',   start: '01-01', end: '01-03' },
-      { key: 'cny',         name: '年货节', start: '01-15', end: '02-15' },
-      { key: 'labor',       name: '劳动节', start: '05-01', end: '05-05' },
-      { key: 'midyear',     name: '618',    start: '06-01', end: '06-20' },
-      { key: 'nationalday', name: '国庆节', start: '10-01', end: '10-07' },
-      { key: 'double11',    name: '双11',   start: '11-01', end: '11-11' },
-      { key: 'double12',    name: '双12',   start: '12-01', end: '12-12' }
+      { key: 'newyear',     name: '元旦',   start: '01-01', end: '01-03', promoLabel: '元旦特惠价',   emoji: '🎊', desc: '新年焕新季' },
+      { key: 'cny',         name: '年货节', start: '01-15', end: '02-15', promoLabel: '年货特惠价',   emoji: '🧨', desc: '年货囤货季 · 过年提前穿新鞋' },
+      { key: 'labor',       name: '劳动节', start: '05-01', end: '05-05', promoLabel: '劳动节特惠价', emoji: '🛠️', desc: '劳动光荣 · 致敬奋斗者' },
+      { key: 'midyear',     name: '618',    start: '06-01', end: '06-20', promoLabel: '年中大促价',   emoji: '🎁', desc: '年中狂欢 · 全场放价' },
+      { key: 'nationalday', name: '国庆节', start: '10-01', end: '10-07', promoLabel: '国庆特惠价',   emoji: '🎆', desc: '国庆钜惠 · 共庆华诞' },
+      { key: 'double11',    name: '双11',   start: '11-01', end: '11-11', promoLabel: '双11狂欢价',   emoji: '🔥', desc: '双11狂欢 · 一年一度' },
+      { key: 'double12',    name: '双12',   start: '12-01', end: '12-12', promoLabel: '双12年终价',   emoji: '🎉', desc: '双12年终盛典' }
     ];
 
     function parseDay520(str) {
@@ -1320,15 +1447,16 @@ loadShoesFromMainSite();
     }
 
     // 当前是否处于节日活动期（按页面当天本地日期）
+    // 返回 {active, festival}：active=是否特惠期，festival=命中的节日对象（含 key/emoji/desc）
     function isPromoNow520() {
       const today = dayStart520(new Date());
       const y = today.getFullYear();
       for (const f of FESTIVALS_520) {
         const start = addDays520(parseDay520(y + '-' + f.start), -5); // 节前 5 天
         const end = addDays520(parseDay520(y + '-' + f.end), 1);     // 节后 1 天
-        if (today >= start && today <= end) return true;
+        if (today >= start && today <= end) return { active: true, festival: f };
       }
-      return false;
+      return { active: false, festival: null };
     }
 
     // 运费：日常 7 元两双以上 10 元封顶；节日 单双 7 元两双以上包邮
@@ -1547,8 +1675,9 @@ loadShoesFromMainSite();
       // 设置价格（零售价 + 特惠价）
       modalPrice.innerHTML = priceHTML(shoe);
       // 运费：日常 7 元两双以上 10 元封顶；节日 单双 7 元两双以上包邮（内置时间自动切换）
-      modalShipping.textContent = getShippingText520(isPromoNow520());
-      modalShipping.classList.toggle('promo', isPromoNow520());
+      const promo520 = isPromoNow520();
+      modalShipping.textContent = getShippingText520(promo520.active);
+      modalShipping.classList.toggle('promo', promo520.active);
       modal.classList.add('active');          // 显示弹窗（添加 .active 类）
       document.body.style.overflow = 'hidden'; // 禁止页面滚动
 
